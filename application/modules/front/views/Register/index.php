@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title><?php echo APP_TITLE; ?></title>
 
-    <meta name="description" content="Sistem Informasi Keanggotaan BHAYANGKARA UTAMA, LIDIKKRIMSUS RI" />
+    <meta name="description" content="<?php echo APP_TITLE; ?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
     <!-- bootstrap & fontawesome -->
@@ -23,7 +23,7 @@
     <!-- ace styles -->
     <link rel="stylesheet" href="<?php echo base_url()?>assets/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />
     <link rel="stylesheet" href="<?php echo base_url()?>assets/css/css_custom.css" />
-    <link rel="shortcut icon" href="<?php echo base_url()?>assets/images/LOGO_BU.png">
+    <link rel="shortcut icon" href="<?php echo base_url()?>assets/images/logo.png">
     <!--[if lte IE 9]>
       <link rel="stylesheet" href="<?php echo base_url()?>assets/css/ace-part2.css" class="ace-main-stylesheet" />
     <![endif]-->
@@ -60,22 +60,31 @@
         border: 1px solid #80808052 !important;
     }
 
+    .ace-nav > li > a {
+      background-color: #383432 !important;
+    }
+
+    .page-header h1{
+      font-family: cursive;
+    }
+
   </style>
   <body class="no-skin">
     <!-- #section:basics/navbar.layout -->
-    <div id="navbar" class="navbar navbar-default    navbar-collapse       h-navbar ace-save-state" style="background: url('assets/images/blue.png');">
+    <div id="navbar" class="navbar navbar-default    navbar-collapse       h-navbar ace-save-state" style="background: linear-gradient(150deg, #fa1414, #f6eb34c7)">
+    <!-- background: linear-gradient(150deg, #fa1414, #f6eb34c7); -->
 			<div class="navbar-container ace-save-state" id="navbar-container">
 				<div class="navbar-header pull-left">
           <a href="<?php echo base_url()?>" class="navbar-brand" style="padding-top: 13px !important">
             <small>
-              <!-- <img src="" height="100px" style="margin: -59px -23px -56px"> -->
+              <img src="<?php echo base_url().'assets/images/logo.png'?>" style="width: 34px; margin: -9px 0px -7px;">
               <?php echo APP_TITLE; ?>
             </small>
           </a>
 
 					<button class="pull-right navbar-toggle navbar-toggle-img collapsed" type="button" data-toggle="collapse" data-target=".navbar-buttons,.navbar-menu">
 						<span class="sr-only">Toggle user menu</span>
-						<img src="<?php echo base_url()?>assets/images/LOGO_BU.png" alt="Jason's Photo">
+						<img src="<?php echo base_url()?>assets/images/logo.png" alt="Jason's Photo">
 					</button>
 
 				</div>
@@ -101,16 +110,17 @@
 								Registrasi Wajib Pajak (WP)
 							</a>
 						</li>
-
+            <?php if($this->session->userdata('login') == TRUE):?>
             <li>
 							<a href="#" onclick="getMenu('Sptpd/form')">
               <i class="ace-icon fa fa-list bigger-120"></i> 
 								Entri SPTPD
 							</a>
 						</li>
+            <?php endif;?>
 
             <li>
-							<a href="#" onclick="getMenu('front/Register/form_register')">
+							<a href="#" onclick="getMenu('login/Login')">
               <i class="ace-icon fa fa-lock bigger-120"></i> 
 								Login
 							</a>
@@ -147,10 +157,10 @@
                   <!-- content here -->
                     <div class="page-header">
                         <h1>
-                          <?php echo $title?>
+                          Selamat Datang
                           <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            <?php echo isset($subtitle)?$subtitle:''?>
+                            <marquee style="width:80%; font-style: italic; font-size: 14px !important; color: black">Selamat datang di aplikasi e-SPTPD Online, silahkan Daftarkan Wajib Pajak Anda dsini.</marquee>
                           </small>
                         </h1>
                       </div>
@@ -184,7 +194,7 @@
 
     <div id="proses-loading">
         <div class="loading-content">
-            <img width="125px" src="<?php echo base_url('assets/images/logo.png') ?>" alt="Logo RSSM">
+            <img width="125px" src="<?php echo base_url('assets/images/logo.png') ?>" alt="<?php echo APP_TITLE; ?>">
             <br>
             <i class="fa fa-cog fa-spin fa-3x fa-fw"></i>
             <br>

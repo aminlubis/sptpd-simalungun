@@ -76,22 +76,22 @@ class Templates extends MX_Controller {
         //     'col_size' => 6,
         //     'url' => 'Templates/Templates/graph?prefix=1&TypeChart=line&style=1',
         //     );
-        $data[2] = array(
+        $data[1] = array(
             'nameid' => 'graph-pie-1',
             'style' => 'pie',
-            'col_size' => 6,
+            'col_size' => 8,
             'url' => 'Templates/Templates/graph?prefix=2&TypeChart=pie&style=1',
             );
-        // $data[3] = array(
-        //     'nameid' => 'graph-table-1',
-        //     'style' => 'table',
-        //     'col_size' => 6,
-        //     'url' => 'Templates/Templates/graph?prefix=3&TypeChart=table&style=1',
-		// 	);
-		$data[1] = array(
+        $data[2] = array(
+            'nameid' => 'graph-table-1',
+            'style' => 'table',
+            'col_size' => 4,
+            'url' => 'Templates/Templates/graph?prefix=3&TypeChart=table&style=1',
+			);
+		$data[3] = array(
 			'nameid' => 'graph-bar-1',
 			'style' => 'bar-basic',
-			'col_size' => 6,
+			'col_size' => 12,
 			'url' => 'Templates/Templates/graph?prefix=4&TypeChart=bar-basic&style=1',
 			);
 		            

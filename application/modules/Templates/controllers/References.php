@@ -71,21 +71,21 @@ class References extends MX_Controller {
 	public function getVillage()
 	{
         
-		$result = $this->getVillageByKeyword($_POST['keyword'],$_POST['district']);
+		$result = $this->getVillageByKeyword($_POST['keyword']);
 		$arrResult = [];
 		foreach ($result as $key => $value) {
-			$arrResult[] = $value->id.' : '.$value->name;
+			$arrResult[] = $value->kode_kecamatan.'.'.$value->kode_kelurahan.' : '.$value->nama_kelurahan;
 		}
 		echo json_encode($arrResult);
 		
 		
 	}
 
-	public function getVillageByKeyword($key='',$district='')
+	public function getVillageByKeyword($key='')
 	{
-        $query = $this->db->where("name LIKE '%".$key."%' ")->where("district_id", $district)
-        				  ->order_by('name', 'ASC')
-                          ->get('villages');
+        $query = $this->db->where("nama_kelurahan LIKE '%".$key."%' ")
+        				  ->order_by('nama_kelurahan', 'ASC')
+                          ->get('kode_kelurahan');
 		
         return $query->result();
 	}
@@ -119,11 +119,9 @@ class References extends MX_Controller {
 
 	public function getDistrictsById($id='')
 	{
-		$query = "select  b.id as province_id, b.name as province_name,c.id as regency_id,c.name as regency_name
-				from districts a
-				left join provinces b on b.id=a.province_id
-				left join regencies c on c.id=a.regency_id
-				where a.id=".$id." ";
+		$query = "select kode_kecamatan, nama_kecamatan
+				from kode_kecamatan a
+				where a.kode_kecamatan=".$id." ";
 		$exc = $this->db->query($query);
 		echo json_encode($exc->row());
 	}
@@ -147,15 +145,14 @@ class References extends MX_Controller {
         echo json_encode($query->result());
 	}
 
-	public function getUsaha($jenis_pajak)
+	public function getUsaha()
 	{
-        $query = $this->db->where('kodejenispajak', $jenis_pajak)
-        				  ->order_by('nama_usaha', 'ASC')
+        $query = $this->db->order_by('nama_usaha', 'ASC')
                           ->get('objek_pajak')->result();
 		
 		$arrResult = [];
 		foreach ($query as $key => $value) {
-			$arrResult[] = $value->id_izin_usaha.' : '.$value->nama_usaha;
+			$arrResult[] = $value->id_izin_usaha.' - '.$value->nama_usaha.' - '.$value->npwpd.'';
 		}
 		echo json_encode($arrResult);
 	}

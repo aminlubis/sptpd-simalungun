@@ -10,6 +10,7 @@
         </h1>
     </div>
     <div class="col-sm-12">
+
         <form class="form-horizontal" method="post" id="form-default" action="<?php echo site_url('front/Register/process')?>" enctype="multipart/form-data" autocomplete="off">
         
         <br>
@@ -18,7 +19,7 @@
             <label class="control-label col-md-1">Tgl Daftar</label>  
             <div class="col-md-2">
                 <div class="input-group">
-                    <input name="tgl_daftar" id="tgl_daftar" value=""  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
+                    <input name="tgldaftar" id="tgldaftar" value="<?php echo isset($value->tgldaftar)?$value->tgldaftar:date('Y-m-d')?>"  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
                     <span class="input-group-addon">
                     <i class="ace-icon fa fa-calendar"></i>
                     </span>
@@ -29,30 +30,30 @@
         <div class="form-group">
             <label class="control-label col-md-1">No. KTP</label>
             <div class="col-md-2">
-                <input name="no_ktp" id="no_ktp" value=""  class="form-control" type="text">
+                <input name="no_ktp" id="no_ktp" value="<?php echo isset($value->noktp)?$value->noktp:''?>"  class="form-control" type="text">
             </div>
             <label class="control-label col-md-1">Nama WP</label>
             <div class="col-md-2">
-                <input name="nama" id="nama" value=""  class="form-control" type="text">
+                <input name="nama" id="nama" value="<?php echo isset($value->nama)?$value->nama:''?>"  class="form-control" type="text">
             </div>
         </div>
 
         <div class="form-group" style="margin-bottom: 4px">
             <label class="control-label col-md-1">Alamat</label>
             <div class="col-md-4">
-            <textarea class="form-control" name="alamat" style="height: 60px !important"></textarea>
+            <textarea class="form-control" name="alamat" style="height: 60px !important"><?php echo isset($value->alamat)?$value->alamat:''?></textarea>
             </div>
         </div>
 
         <div class="form-group">
             <label class="control-label col-md-1">Tempat Lahir</label>
             <div class="col-md-2">
-                <input name="tempatlahir" id="tempatlahir" value=""  class="form-control" type="text">
+                <input name="tempatlahir" id="tempatlahir" value="<?php echo isset($value->tempatlahir)?$value->tempatlahir:''?>"  class="form-control" type="text">
             </div>
             <label class="control-label col-md-1">Tgl Lahir</label>  
             <div class="col-md-2">
                 <div class="input-group">
-                    <input name="tanggallahir" id="tanggallahir" value=""  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
+                    <input name="tanggallahir" id="tanggallahir" value="<?php echo isset($value->tanggallahir)?$value->tanggallahir:''?>"  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
                     <span class="input-group-addon">
                     <i class="ace-icon fa fa-calendar"></i>
                     </span>
@@ -63,13 +64,13 @@
         <div class="form-group">
             <label class="control-label col-md-1">Kecamatan</label>
             <div class="col-md-2">
-                <input id="inputKecamatan" class="form-control" name="kecamatan" type="text" placeholder="Masukan 3 karakter" value=""/>
-                <input type="hidden" name="kecamatanHidden" value="" id="kecamatanHidden">
+                <input id="inputKecamatan" class="form-control" name="kecamatan" type="text" placeholder="Masukan 3 karakter" value="" readonly/>
+                <input type="hidden" name="kecamatanHidden" value="<?php echo isset($value->kecamatan)?$value->kecamatan:''?>" id="kecamatanHidden">
             </div>
             <label class="control-label col-md-1">Kelurahan</label>
             <div class="col-md-2">
-                <input id="inputKecamatan" class="form-control" name="kecamatan" type="text" placeholder="Masukan 3 karakter" value=""/>
-                <input type="hidden" name="kecamatanHidden" value="" id="kecamatanHidden">
+                <input id="inputKelurahan" class="form-control" name="kelurahan" type="text" placeholder="Masukan 3 karakter" value=""/>
+                <input type="hidden" name="kelurahanHidden" value="<?php echo isset($value->kelurahan)?$value->kelurahan:''?>" id="kelurahanHidden">
             </div>
         </div>
 
@@ -77,17 +78,18 @@
         <div class="form-group">
             <label class="control-label col-md-1">Kode Pos</label>
             <div class="col-md-2">
-                <input id="kodepos" class="form-control" name="kodepos" type="text"/>
+                <input id="kodepos" class="form-control" name="kodepos" type="text" value="<?php echo isset($value->kodepos)?$value->kodepos:''?>"/>
             </div>
         </div>
 
         <div class="form-group">
             <label class="control-label col-md-1">No Telp/WA</label>
             <div class="col-md-2">
-                <input id="telp" class="form-control" name="telp" type="text"/>
+                <input id="telp" class="form-control" name="telp" type="text" value="<?php echo isset($value->telp)?$value->telp:''?>"/>
             </div>
         </div>
-
+        
+        <?php if($this->session->userdata('logged') == false) :?>
         <br>
         <p><b>BUAT AKUN</b></p>
         <div class="form-group">
@@ -100,16 +102,17 @@
         <div class="form-group">
             <label class="control-label col-md-2">Kata Sandi</label>
             <div class="col-md-2">
-                <input id="username" class="form-control" name="username" type="text"/>
+                <input id="password" class="form-control" name="password" type="password"/>
             </div>
         </div>
 
         <div class="form-group">
             <label class="control-label col-md-2">Konfirmasi Kata Sandi</label>
             <div class="col-md-2">
-                <input id="username" class="form-control" name="username" type="text"/>
+                <input id="password" class="form-control" name="konfirm_password" type="password"/>
             </div>
         </div>
+        <?php endif; ?>
 
         <div class="col-md-4 no-padding" style="margin-left: -6px !important; padding-top: 20px !important">
             <button type="submit" id="btnSave" name="submit" class="btn btn-sm btn-primary">
@@ -129,8 +132,7 @@
 <!-- end content here -->
 </div>
 
-<!-- <script src="<?php echo base_url().'assets/js/custom/als_datatable.js'?>"></script>
-<script src="<?php echo base_url()?>assets/js/typeahead.js"></script> -->
+<script src="<?php echo base_url()?>assets/js/typeahead.js"></script>
 
 <script>
     jQuery(function($) {  
@@ -152,19 +154,20 @@
       
       $('#form-default').ajaxForm({
         beforeSend: function() {
-          achtungShowLoader();  
+            
         },
         uploadProgress: function(event, position, total, percentComplete) {
         },
         complete: function(xhr) {     
           var data=xhr.responseText;
           var jsonResponse = JSON.parse(data);
-
+          achtungShowFadeIn();  
           if(jsonResponse.status === 200){
             $.achtung({message: jsonResponse.message, timeout:5});
-            $('#page-area-content').html('<br><br><div class="alert alert-success"><strong>Berhasil !</strong> Terima kasih telah mendaftar menjadi anggota Bhayangkara Utama, data anda akan diproses oleh Admin kami.</div>');
+            $('#page-area-content').html('<div class="alert alert-success"><strong style="font-size: 14px"><i class="fa fa-check-circle green"></i> Sukses</strong><br> Terima kasih telah Mendaftar Wajib Pajak, data anda akan segera diproses oleh petugas kami.</div>');
           }else{
             $.achtung({message: jsonResponse.message, timeout:5, className: 'achtungFail'});
+            ('#page-area-content').html('<div class="alert alert-danger"><strong><i class="fa fa-times-circle red"></i> Gagal !</strong><br>Maaf, proses Registrasi Wajib Pajak gagal dilakukan, silahkan coba beberapa saat lagi.</div>');
           }
           achtungHideLoader();
         }
@@ -193,10 +196,10 @@
         }
         });
 
-        $('#inputKecamatan').typeahead({
+        $('#inputKelurahan').typeahead({
             source: function (query, result) {
                 $.ajax({
-                    url: "Templates/References/getDistricts",
+                    url: "Templates/References/getVillage",
                     data: 'keyword=' + query ,         
                     dataType: "json",
                     type: "POST",
@@ -209,26 +212,23 @@
             },
             afterSelect: function (item) {
                 // do what is needed with item
-                var val_item=item.split(':')[0];
+                var kode_kecamatan=item.split('.')[0];
+                var kelurahan=item.split('.')[1];
+                var val_item=kelurahan.split(':')[0];
+                var val_label=item.split(':')[1];
+                $('#inputKelurahan').val(val_label);
+                $('#kelurahanHidden').val(val_item);
 
                 if (val_item) {          
 
-                $('#provinsiHidden').val('');
-                $('#inputProvinsi').val('');
-                $('#kotaHidden').val('');
-                $('#inputKota').val('');           
+                    $('#provinsiHidden').val('');
 
-                $.getJSON("<?php echo site_url('Templates/References/getDistrictsById') ?>/" + val_item, '', function (data) {  
-                    
-                    $('#provinsiHidden').val(data.province_id);
-                    $('#inputProvinsi').val(data.province_name);
-                    $('#kotaHidden').val(data.regency_id);
-                    $('#inputKota').val(data.regency_name);           
+                    $.getJSON("<?php echo site_url('Templates/References/getDistrictsById') ?>/" + kode_kecamatan, '', function (data) {  
+                        
+                        $('#kecamatanHidden').val(data.kode_kecamatan);
+                        $('#inputKecamatan').val(data.nama_kecamatan);         
 
-                }); 
-                $('#kecamatanHidden').val(val_item);
-                $('#prov').show('fast');
-                $('#village').show('fast'); 
+                    }); 
                 }      
             }
             });

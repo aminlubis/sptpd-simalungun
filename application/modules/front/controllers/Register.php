@@ -8,6 +8,8 @@ class Register extends MX_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('front/Register_model','Register');
+        /*load library*/
+        $this->load->library('bcrypt');
 
     }
 
@@ -25,15 +27,27 @@ class Register extends MX_Controller {
         
     }
 
-    public function form_register() {
+    public function form_register($id='') {
         $this->output->enable_profiler(false);
         /*breadcrumb*/
         $this->breadcrumbs->push('Welcome', 'Register/'.strtolower(get_class($this)));
-         $data = array(
-            'title' => 'Form Registrasi',
-            'subtitle' => COMPANY,
-            
-        );
+        $data = [];
+        if( $id != '' ){
+            /*breadcrumbs for edit*/
+            $this->breadcrumbs->push('Edit', 'front/Register/'.strtolower(get_class($this)).'/'.__FUNCTION__);
+            /*get value by id*/
+            $data['value'] = $this->Register->get_by_id($id);
+            /*initialize flag for form*/
+            $data['flag'] = "update";
+        }else{
+            /*breadcrumbs for create or add row*/
+            $this->breadcrumbs->push('Add', 'front/Register/'.strtolower(get_class($this)).'/form_register');
+            /*initialize flag for form add*/
+            $data['flag'] = "create";
+        }
+
+        $data['title'] = 'Registrasi Wajib Pajak';
+        $data['subtitle'] = 'Form Registrasi';
 
         $this->load->view('Register/form', $data);
         
@@ -49,50 +63,25 @@ class Register extends MX_Controller {
        $this->load->view('Register/form_show_dt', $data);
    }
 
-    public function form_cek_kta() {
-        $this->output->enable_profiler(false);
-        /*breadcrumb*/
-        $this->breadcrumbs->push('Welcome', 'Register/'.strtolower(get_class($this)));
-         $data = array(
-            'title' => 'Form Registrasi',
-            'subtitle' => COMPANY,
-            'app' => $this->db->get_where('tmp_profile_app', array('id' => 1))->row(),
-            
-        );
-
-        $this->load->view('Register/form_cek_kta', $data);
-        
-    }
-
     public function process()
     {
         // print_r($_POST);die;
         $this->load->library('form_validation');
         $val = $this->form_validation;
         
-        if($_POST['tipe_anggota'] == 'old'){
-            $val->set_rules('masa_aktif', 'Masa Aktif', 'trim|required' );
-            $val->set_rules('no_kta_old', 'No KTA Lama', 'trim|required' );
-            if (empty($_FILES['foto_kta_old']['name'])){
-                $val->set_rules('foto_kta_old', 'Foto KTA Old', 'required', array('required' => 'Silahkan upload Foto KTA Lama') );
-            }
-        }
-        
-        $val->set_rules('no_identitas', 'No Identitas', 'trim|required');
-        $val->set_rules('nama', 'Nama', 'trim|required');
-        $val->set_rules('tmp_lhr', 'Tempat Lahir', 'trim|required');
-        $val->set_rules('tgl_lhr', 'Tanggal Lahir', 'trim|required');
+        $val->set_rules('tgldaftar', 'Tanggal Daftar', 'trim|required');
+        $val->set_rules('no_ktp', 'No KTP', 'trim|required|min_length[15]|max_length[16]|numeric|is_unique[wajibpajak.noktp]', array('min_length' => 'No KTP Minimal 15 Karakter', 'max_length' => 'No KTP Maksimal 16 Karakter', 'numeric' => 'No KTP Harus diisi Angka', 'is_unique' => 'No KTP anda sudah terdaftar Wajib Pajak'));
+        $val->set_rules('nama', 'Nama WP', 'trim|required|min_length[5]', array('min_length' => 'Nama WP minimal 5 karakter'));
         $val->set_rules('alamat', 'Alamat', 'trim|required');
-        $val->set_rules('provinsiHidden', 'Provinsi', 'trim|required',array('required' => 'Provinsi tidak ditemukan'));
-        $val->set_rules('kotaHidden', 'Kab/Kota', 'trim|required',array('required' => 'Kab/Kota tidak ditemukan'));
-        $val->set_rules('kecamatanHidden', 'Kecamatan', 'trim|required',array('required' => 'Kecamatan tidak ditemukan'));
-        $val->set_rules('no_telp', 'No. Telp', 'trim|required');
-        $val->set_rules('email', 'Email', 'trim|required|valid_email', array('valid_email' => "Format \"%s\" tidak sesuai") );
-        $val->set_rules('pekerjaan', 'Pekerjaan', 'trim|required');
-        $val->set_rules('agama', 'Agama', 'trim|required');
-        $val->set_rules('agreement', 'Pernyataan dan Persetujuan', 'trim|required', array('required' => 'Silahkan ceklist Pernyataan dan Persetujuan Anggota') );
-
-        
+        $val->set_rules('tempatlahir', 'Tempat Lahir', 'trim|required');
+        $val->set_rules('tanggallahir', 'Tanggal Lahir', 'trim|required');
+        $val->set_rules('kecamatanHidden', 'Kecamatan', 'trim|required');
+        $val->set_rules('kelurahanHidden', 'Kelurahan', 'trim|required');
+        $val->set_rules('telp', 'No. Telp/WA', 'trim|required');
+        $val->set_rules('kodepos', 'Kode POS', 'trim|required');
+        $val->set_rules('username', 'Nama Pengguna', 'trim|required|is_unique[qrcode_user.username]', array('is_unique' => 'Nama Pengguna sudah digunakan'));
+        $val->set_rules('konfirm_password', 'Konfirmasi Password', 'required|matches[password]', array('matches' => 'Konfirmasi Kata Sandi tidak sesuai'));
+        $val->set_rules('password', 'Konfirmasi Password', 'trim|required|min_length[6]', array('min_length' => 'Kata Sandi minimal 6 karakter'));
 
         $val->set_message('required', "Silahkan isi field \"%s\"");
 
@@ -105,78 +94,38 @@ class Register extends MX_Controller {
         {                       
             $this->db->trans_begin();
             $id = ($this->input->post('id'))?$this->input->post('id'):0;
+            $urutan = $this->db->select('(max(no_urut)+1) as urutan')->from('wajibpajak')->get()->row();
+            $npwpd = sprintf("%04d-%03d",$urutan->urutan,$_POST['kelurahanHidden']);
 
             $dataexc = array(
-                'no_id' => $this->regex->_genRegex( $val->set_value('no_identitas') , 'RGXQSL'),
-                'nama' => $this->regex->_genRegex( $val->set_value('nama') , 'RGXQSL'),
-                'no_telp' => $this->regex->_genRegex( $val->set_value('no_telp') , 'RGXQSL'),
-                'email' => $this->regex->_genRegex( $val->set_value('email') , 'RGXQSL'),
-                'alamat_ktp' => $this->regex->_genRegex( $val->set_value('alamat') , 'RGXQSL'),
-                'provinsi' => $this->regex->_genRegex( $val->set_value('provinsiHidden') , 'RGXQSL'),
-                'kabkota' => $this->regex->_genRegex( $val->set_value('kotaHidden') , 'RGXQSL'),
-                'kecamatan' => $this->regex->_genRegex( $val->set_value('kecamatanHidden') , 'RGXQSL'),
-                'pekerjaan' => $this->regex->_genRegex( $val->set_value('pekerjaan') , 'RGXQSL'),
-                'kabkota' => $this->regex->_genRegex( $val->set_value('kotaHidden') , 'RGXQSL'),
-                'tmp_lhr' => $this->regex->_genRegex( $val->set_value('tmp_lhr') , 'RGXQSL'),
-                'tgl_lhr' => $this->regex->_genRegex( $val->set_value('tgl_lhr') , 'RGXQSL'),
-                'agama' => $this->regex->_genRegex( $val->set_value('agama') , 'RGXQSL'),
-                'jenis_anggota' => $this->regex->_genRegex( strtoupper($_POST['jenis_anggota']) , 'RGXQSL'),
-                'tgl_register' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
-                'tipe_anggota' => $this->regex->_genRegex( $_POST['tipe_anggota'] , 'RGXQSL'),
-                'is_active' => $this->regex->_genRegex( 'N' , 'RGXQSL'),
+                'npwpd' => $this->regex->_genRegex( $npwpd, 'RGXQSL'),
+                'no_urut' => $this->regex->_genRegex( $urutan->urutan, 'RGXQSL'),
+                'tgldaftar' => $this->regex->_genRegex( $val->set_value('tgldaftar'), 'RGXQSL'),
+                'noktp' => $this->regex->_genRegex( $val->set_value('no_ktp'), 'RGXQSL'),
+                'nama' => $this->regex->_genRegex( $val->set_value('nama'), 'RGXQSL'),
+                'alamat' => $this->regex->_genRegex( $val->set_value('alamat'), 'RGXQSL'),
+                'tempatlahir' => $this->regex->_genRegex( $val->set_value('tempatlahir'), 'RGXQSL'),
+                'tanggallahir' => $this->regex->_genRegex( $val->set_value('tanggallahir'), 'RGXQSL'),
+                'kecamatan' => $this->regex->_genRegex( $val->set_value('kecamatanHidden'), 'RGXQSL'),
+                'kelurahan' => $this->regex->_genRegex( $val->set_value('kelurahanHidden'), 'RGXQSL'),
+                'kabupatenkota' => $this->regex->_genRegex( 'Kabupaten Simalungun', 'RGXQSL'),
+                'telp' => $this->regex->_genRegex( $val->set_value('telp'), 'RGXQSL'),
+                'kodepos' => $this->regex->_genRegex( $val->set_value('kodepos'), 'RGXQSL'),
+                'tglsistem' => date('Y-m-d H:i:s'),
             );
-
-            if($_POST['tipe_anggota'] == 'old'){
-                $dataexc['no_kta_old'] = $_POST['no_kta_old'];
-                $dataexc['masa_aktif'] = $_POST['masa_aktif'];
-
-                if(isset($_FILES['foto_kta_old']['name'])){
-                    /*hapus dulu file yang lama*/
-                    if( $id != 0 ){
-                        $file_kta_old_ex = $this->Register->get_by_id($id);
-                        if ($file_kta_old_ex->foto_kta_old != NULL) {
-                            unlink(PATH_IMG_DEFAULT.$file_kta_old_ex->foto_kta_old.'');
-                        }
-                    }
-                    $dataexc['foto_kta_old'] = $this->upload_file->doUpload('foto_kta_old', PATH_IMG_DEFAULT);
-                }
-            }
-
-            if(isset($_FILES['file_identitas']['name'])){
-                /*hapus dulu file yang lama*/
-                if( $id != 0 ){
-                    $file_ex = $this->Register->get_by_id($id);
-                    if ($file_ex->scan_identitas != NULL) {
-                        unlink(PATH_IMG_DEFAULT.$file_ex->scan_identitas.'');
-                    }
-                }
-                $dataexc['scan_identitas'] = $this->upload_file->doUpload('file_identitas', PATH_IMG_DEFAULT);
-            }
-
-            if(isset($_FILES['pas_foto']['name'])){
-                /*hapus dulu file yang lama*/
-                if( $id != 0 ){
-                    $file_ex = $this->Register->get_by_id($id);
-                    if ($file_ex->pas_foto != NULL) {
-                        unlink(PATH_IMG_DEFAULT.$file_ex->pas_foto.'');
-                    }
-                }
-                $dataexc['pas_foto'] = $this->upload_file->doUpload('pas_foto', PATH_IMG_DEFAULT);
-            }
-
             
             if($id==0){
-                $dataexc['created_date'] = date('Y-m-d H:i:s');
-                $dataexc['created_by'] = json_encode(array('user_id' =>'register user', 'fullname' => $_POST['nama']));
-                $dataexc['updated_date'] = date('Y-m-d H:i:s');
-                $dataexc['updated_by'] = json_encode(array('user_id' =>'register user', 'fullname' => $_POST['nama']));
-                /*save post data*/
                 $this->Register->save($dataexc);
                 $newId = $this->db->insert_id();
+                // create account
+                $account = array(
+                    'username' => $this->regex->_genRegex($val->set_value('username'),'RGXQSL'),
+                    'noktp' => $this->regex->_genRegex($val->set_value('no_ktp'),'RGXQSL'),
+                    'password' => $this->bcrypt->hash_password($val->set_value('password')),
+                    'tgl_daftar' => $this->regex->_genRegex($dataexc['tglsistem'],'RGXQSL'),
+                );
+                $this->db->insert('qrcode_user', $account);
             }else{
-                $dataexc['updated_date'] = date('Y-m-d H:i:s');
-                $dataexc['updated_by'] = json_encode(array('user_id' =>'register user', 'fullname' => $_POST['nama']));
-                /*update record*/
                 $this->Register->update(array('id' => $id), $dataexc);
                 $newId = $id;
             }

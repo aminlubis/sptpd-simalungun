@@ -23,7 +23,19 @@ final Class Graph_master {
 
 		if($params['prefix']==2){	
 			$fields = array('jenispajak' => 'total');
-			$title = '<span style="font-size:13.5px">Persantase Objek Pajak Berdasarkan Jenis Pajak </span>';
+			$title = '<span style="font-size:13.5px">Rekapitulasi Persantase Objek Pajak Berdasarkan Jenis Pajak </span>';
+			$subtitle = 'Source: '.APP_TITLE.'';
+			$db->select('b.jenispajak, COUNT(*) as total');
+			$db->from('objek_pajak a');
+			$db->join('jenispajak b','b.kodejenispajak=a.kodejenispajak','left');
+			$db->group_by('a.kodejenispajak');
+			/*excecute query*/
+			$data = $db->get()->result_array();
+		}
+
+		if($params['prefix']==3){	
+			$fields = array('Jenis_Pajak' => 'jenispajak', 'Total' => 'total');
+			$title = '<span style="font-size:13.5px">Jumlah Objek Pajak Berdasarkan Jenis Mata Pajak </span>';
 			$subtitle = 'Source: '.APP_TITLE.'';
 			$db->select('b.jenispajak, COUNT(*) as total');
 			$db->from('objek_pajak a');

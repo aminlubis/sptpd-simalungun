@@ -12,7 +12,8 @@ $(function () {
         html = '';
         $.each(response_data, function (i, o) {
 
-          html += '<div class="col-sm-'+o.col_size+'"><div id="'+o.nameid+'"></div></div>';
+          var style = (o.style == 'bar-basic')?'style="height: 700px !important"':'';
+          html += '<div class="col-sm-'+o.col_size+'" style="padding-bottom: 20px !important"><div id="'+o.nameid+'" '+style+'></div></div><br>';
 
           if(o.style=='column'){
             GraphColumnStyle(o.mod, o.nameid, o.url);
