@@ -1,3 +1,8 @@
+<script type="text/javascript" src="<?php echo base_url()?>assets/jquery_number/jquery.number.js"></script>
+<script>
+    $('.format_number').number( true, 0, '.' );
+</script>
+
 <div class="row">
 <!-- content here -->
     <div class="page-header">
@@ -10,24 +15,25 @@
         </h1>
     </div>
     <div class="col-sm-12">
-        <form class="form-horizontal" method="post" id="form-default" action="<?php echo site_url('front/Register/process')?>" enctype="multipart/form-data" autocomplete="off">
-        
+        <form class="form-horizontal" method="post" id="form-default" action="" enctype="multipart/form-data" autocomplete="off">
         <br>
+        <span>Nomor Wajib Pajak : <b><?php echo $profil_wp->npwpd?></b> | <i>registered at <?php echo $this->tanggal->formatDateFormDmy($profil_wp->tgldaftar)?></i></span><br>
+        <span style="font-weight: bold; font-size: 16px"><?php echo $profil_wp->nama?> [ <?php echo $profil_wp->noktp?> ]</span>
+        <!-- hidden -->
+        <input type="hidden" name="namawajibpajak" value="<?php echo $profil_wp->nama?>">
+        <input type="hidden" name="namausahaop" id="namausahaop" value="">
+        
+        <hr>
+
         <p style="font-weight: bold">CARI OBJEK PAJAK ATAU JENIS USAHA</p>
 
         <div>
             <label for="form-field-mask-1">
-                Ketikan Nama Usaha Anda :
+                Pilih Objek Pajak atau Usaha Anda :
             </label>
 
-            <div class="input-group">
-            <input name="nama_usaha" id="nama_usaha" value=""  class="form-control" type="text">
-                <span class="input-group-btn">
-                    <button class="btn btn-sm btn-default" type="button">
-                        <i class="ace-icon fa fa-search bigger-110"></i>
-                        Cari !
-                    </button>
-                </span>
+            <div class="input-group col-md-12">
+                <?php echo $this->master->custom_selection(array('table'=>'objek_pajak', 'where'=>array('npwpd' => $profil_wp->npwpd), 'id'=>'id_izin_usaha', 'name' => 'nama_usaha'),'','jenisusaha','jenisusaha','form-control','','');?>
             </div>
         </div>
 
@@ -51,7 +57,7 @@
                 <label class="control-label col-md-1">Masa Pajak</label>  
                 <div class="col-md-2">
                     <div class="input-group">
-                        <input name="tgl_daftar" id="tgl_daftar" value="<?php echo date('Y-m-d')?>"  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
+                        <input name="periodeawal" id="periodeawal" value="<?php echo date('Y-m-d')?>"  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
                         <span class="input-group-addon">
                         <i class="ace-icon fa fa-calendar"></i>
                         </span>
@@ -60,7 +66,7 @@
                 <label class="control-label col-md-1">s/d Tanggal</label>  
                 <div class="col-md-2">
                     <div class="input-group">
-                        <input name="tgl_daftar" id="tgl_daftar" value="<?php echo date('Y-m-d', strtotime("+30 days"));?>"  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
+                        <input name="periodeakhir" id="periodeakhir" value="<?php echo date('Y-m-d', strtotime("+30 days"));?>"  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
                         <span class="input-group-addon">
                         <i class="ace-icon fa fa-calendar"></i>
                         </span>
@@ -72,7 +78,7 @@
                 <label class="control-label col-md-1">Tgl Lapor SPTPD</label>  
                 <div class="col-md-2">
                     <div class="input-group">
-                        <input name="tgl_daftar" id="tgl_daftar" value="<?php echo date('Y-m-d')?>"  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
+                        <input name="tgllapor" id="tgllapor" value="<?php echo date('Y-m-d')?>"  class="form-control date-picker" type="text" data-date-format="yyyy-mm-dd">
                         <span class="input-group-addon">
                         <i class="ace-icon fa fa-calendar"></i>
                         </span>
@@ -96,25 +102,25 @@
             <div class="form-group">
                 <label class="control-label col-md-2">DPP</label>
                 <div class="col-md-1">
-                    <input name="nama_usaha" id="nama_usaha" value=""  class="form-control" type="text">
+                    <input name="dpp" id="dpp" value=""  class="form-control format_number" type="text">
                 </div>
                 <label class="control-label col-md-1">Tarif Pajak</label>
                 <div class="col-md-1">
-                    <input name="nama_usaha" id="nama_usaha" value=""  class="form-control" type="text">
+                    <input name="trfpajak" id="trfpajak" value="10"  class="form-control" type="text">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="control-label col-md-2">Pajak Sebelum Pembulatan</label>
                 <div class="col-md-1">
-                    <input name="nama_usaha" id="nama_usaha" value=""  class="form-control" type="text">
+                    <input name="pajaksblmpembulatan" id="pajaksblmpembulatan" value=""  class="form-control format_number" type="text">
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="control-label col-md-2">Pajak Terutang</label>
                 <div class="col-md-1">
-                    <input name="nama_usaha" id="nama_usaha" value=""  class="form-control" type="text">
+                    <input name="pajakterutang" id="pajakterutang" value=""  class="form-control format_number" type="text">
                 </div>
             </div>
 
@@ -156,70 +162,33 @@
     });
 
     $(document).ready(function(){
-      
+        
+        
         $('#form-default').ajaxForm({
             beforeSend: function() {
-                achtungShowLoader();  
+                achtungShowFadeIn();  
             },
             uploadProgress: function(event, position, total, percentComplete) {
             },
             complete: function(xhr) {     
                 var data=xhr.responseText;
                 var jsonResponse = JSON.parse(data);
-
+                
                 if(jsonResponse.status === 200){
                 $.achtung({message: jsonResponse.message, timeout:5});
-                $('#page-area-content').html('<br><br><div class="alert alert-success"><strong>Berhasil !</strong> Terima kasih telah mendaftar menjadi anggota Bhayangkara Utama, data anda akan diproses oleh Admin kami.</div>');
+                $('#page-area-content').html('<div class="alert alert-success"><strong style="font-size: 14px"><i class="fa fa-check-circle green"></i> Sukses</strong><br> Terima kasih anda telah melakukan Input Data e-SPTPD Online, data anda akan segera diproses oleh petugas kami.</div>');
                 }else{
                 $.achtung({message: jsonResponse.message, timeout:5, className: 'achtungFail'});
+                $('#page-area-content').html('<div class="alert alert-danger"><strong><i class="fa fa-times-circle red"></i> Gagal !</strong><br>Maaf, proses Input Data e-SPTPD anda gagal dilakukan, silahkan coba beberapa saat lagi.</div>');
                 }
                 achtungHideLoader();
             }
         }); 
 
-        $('#nama_usaha').typeahead({
-            source: function (query, result) {
-                $.ajax({
-                    url: "Templates/References/getUsaha",
-                    data: 'keyword=' + query ,         
-                    dataType: "json",
-                    type: "POST",
-                    success: function (response) {
-                        result($.map(response, function (item) {
-                            return item;
-                        }));
-                    }
-                });
-            },
-            afterSelect: function (item) {
-                // do what is needed with item
-                var val_item=item.split('-')[0];
-                var val_label=item.split('-')[1];
-
-                $('#nama_usaha').val(val_label);
-
-                if (val_item) {          
-
-                    $('#npwpd').val('');
-                    $('#nopd').val('');
-
-                    $.getJSON("<?php echo site_url('Templates/References/getUsahaByID') ?>/" + val_item, '', function (response) {  
-                        // show hidden form
-                        $('#main_form').show();
-
-                        $('#npwpd').val(response.npwpd);
-                        $('#nopd').val(response.nopd);   
-                        // change jenis usaha
-                        $('#jenispajak').val(response.kodejenispajak);
-                        $('select[name="jenispajak"]').change();
-
-                    }); 
-                }      
-            }
-        });
 
         $('select[name="jenispajak"]').change(function () {
             if ($(this).val()) {
+                $('#form-default').attr('action','sptpd/Sptpd/process_'+$(this).val()+'');
                 $.getJSON("<?php echo site_url('Sptpd/changeForm') ?>/" + $(this).val(), '', function (response) {
                     $('#form_by_kodejenispajak').html(response.html);
                 });
@@ -228,6 +197,30 @@
             }
         });
 
+        $('select[name="jenisusaha"]').change(function () {
+            if ($(this).val()) {
+                $('#npwpd').val('');
+                $('#nopd').val('');
+
+                $.getJSON("<?php echo site_url('Templates/References/getUsahaByID') ?>/" + $(this).val(), '', function (response) {  
+                    // show hidden form
+                    $('#main_form').show();
+
+                    $('#namausahaop').val(response.nama_usaha);
+                    $('#npwpd').val(response.npwpd);
+                    $('#nopd').val(response.nopd);   
+                    // change jenis usaha
+                    $('#jenispajak').val(response.kodejenispajak);
+                    $('select[name="jenispajak"]').change();
+
+                }); 
+            } else {
+                $('#form_by_kodejenispajak').html('');
+            }
+        });
+
     })
+
+    
 
 </script>

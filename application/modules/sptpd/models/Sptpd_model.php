@@ -3,11 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Sptpd_model extends CI_Model {
 
-	var $table = 't_anggota';
-	var $column = array('t_anggota.no_id');
-	var $select = 't_anggota.*';
+	var $table = 'objek_pajak';
+	var $column = array('objek_pajak.nama_usaha');
+	var $select = 'objek_pajak.*';
 
-	var $order = array('t_anggota.id' => 'DESC');
+	var $order = array('objek_pajak.id_izin_usaha' => 'DESC');
 
 	public function __construct()
 	{
@@ -18,42 +18,6 @@ class Sptpd_model extends CI_Model {
 		$this->db->select($this->select);
 		$this->db->from($this->table);
 
-		$level = $this->authuser->filtering_data_by_level_user($this->table, $this->session->userdata('user')->user_id);
-		if ( !in_array($level, array(1) ) ) {
-			# code...
-			$format_json = json_encode(array('user_id' => $this->session->userdata('user')->user_id, 'fullname' => $this->regex->_genRegex($this->session->userdata('user')->fullname,'RGXQSL')));
-			$this->db->like($this->table.'.created_by', (string)$format_json);
-		}
-
-		if( isset($_GET['bulan']) AND $_GET['bulan'] != 0 ){
-			$this->db->where('MONTH(tanggal_kejadian)', $_GET['bulan']);
-		}
-
-		if( isset($_GET['tahun']) AND $_GET['tahun'] != 0 ){
-			$this->db->where('YEAR(tanggal_kejadian)', $_GET['tahun']);
-		}
-
-		if( isset($_GET['jenis_bencana']) AND $_GET['jenis_bencana'] != 0 ){
-			$this->db->where('jenis_bencana', $_GET['jenis_bencana']);
-		}
-
-		if( isset($_GET['status_bencana']) AND $_GET['status_bencana'] != 0 ){
-			$this->db->where('status_bencana', $_GET['status_bencana']);
-		}
-
-		if( isset($_GET['level_bencana']) AND $_GET['level_bencana'] != 0 ){
-			$this->db->where('level_bencana', $_GET['level_bencana']);
-		}
-
-		if( isset($_GET['province']) AND $_GET['province'] != 0 ){
-			$this->db->where('provinsi', $_GET['province']);
-		}
-
-		if( isset($_GET['date_by']) ){
-			if( isset($_GET['from_tgl']) AND $_GET['from_tgl'] != '' AND isset($_GET['to_tgl']) AND $_GET['to_tgl'] != ''  ){
-				$this->db->where('CAST('.$_GET['date_by'].' as DATE) BETWEEN '."'".$_GET['from_tgl']."'".' AND '."'".$_GET['to_tgl']."'".' ');
-			}
-		}
 
 	}
 
@@ -61,7 +25,6 @@ class Sptpd_model extends CI_Model {
 	{
 		
 		$this->_main_query();
-		$this->db->where('status_data','sementara');
 
 		$i = 0;
 	
@@ -111,11 +74,11 @@ class Sptpd_model extends CI_Model {
 	{
 		$this->_main_query();
 		if(is_array($id)){
-			$this->db->where_in(''.$this->table.'.id',$id);
+			$this->db->where_in(''.$this->table.'.id_izin_usaha',$id);
 			$query = $this->db->get();
 			return $query->result();
 		}else{
-			$this->db->where(''.$this->table.'.id',$id);
+			$this->db->where(''.$this->table.'.id_izin_usaha',$id);
 			$query = $this->db->get();
 			return $query->row();
 		}
@@ -124,13 +87,13 @@ class Sptpd_model extends CI_Model {
 
 	public function save($data)
 	{
-		$this->db->insert('t_anggota', $data);
+		$this->db->insert('objek_pajak', $data);
 		return $this->db->insert_id();
 	}
 
 	public function update($where, $data)
 	{
-		$this->db->update('t_anggota', $data, $where);
+		$this->db->update('objek_pajak', $data, $where);
 		return $this->db->affected_rows();
 	}
 
@@ -138,8 +101,8 @@ class Sptpd_model extends CI_Model {
 	{
 		$get_data = $this->get_by_id($id);
 		if( $this->delete_image_default($get_data[0]) ){
-			$this->db->where_in(''.'t_anggota'.'.id', $id);
-			return $this->db->delete('t_anggota');
+			$this->db->where_in(''.'objek_pajak'.'.id_izin_usaha', $id);
+			return $this->db->delete('objek_pajak');
 		}else{
 			return false;
 		}
@@ -161,6 +124,15 @@ class Sptpd_model extends CI_Model {
 
 	public function list_fields(){
 		return $this->db->list_fields( $this->table );
+	}
+
+	public function getNoSptpd($nopd){
+		$hop = $this->db->from('history_objek_pajak')
+					->where('noobjekpajak', $nopd)
+					->order_by('id_hop', 'DESC')
+					->get()->row();
+		$nosptpd = $hop->id_hop + 1;
+		return $nosptpd;
 	}
 
 

@@ -8,6 +8,7 @@ class Sptpd extends MX_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('sptpd/Sptpd_model','Sptpd');
+        $this->load->model('front/Register_model','Register');
 
     }
 
@@ -31,6 +32,7 @@ class Sptpd extends MX_Controller {
          $data = array(
             'title' => 'Form SPTPD',
             'subtitle' => COMPANY,
+            'profil_wp' => $this->Register->get_by_id($this->session->userdata('user')->noktp),
             
         );
 
@@ -47,58 +49,17 @@ class Sptpd extends MX_Controller {
         
     }
 
-    public function show_data(){
-        $data = array(
-           'keyword' => $_GET['key'],
-           'value' => $this->Sptpd->cekMember($_GET['key']),
-       );
-    //    echo '<pre>'; print_r($data);die;
-
-       $this->load->view('sptpd/Sptpd/form_show_dt', $data);
-   }
-
-    public function form_cek_kta() {
-        $this->output->enable_profiler(false);
-        /*breadcrumb*/
-        $this->breadcrumbs->push('Welcome', 'Sptpd/'.strtolower(get_class($this)));
-         $data = array(
-            'title' => 'Form Registrasi',
-            'subtitle' => COMPANY,
-            'app' => $this->db->get_where('tmp_profile_app', array('id' => 1))->row(),
-            
-        );
-
-        $this->load->view('Sptpd/form_cek_kta', $data);
-        
-    }
-
-    public function process()
+    public function process_1()
     {
-        // print_r($_POST);die;
+        
         $this->load->library('form_validation');
         $val = $this->form_validation;
         
-        if($_POST['tipe_anggota'] == 'old'){
-            $val->set_rules('masa_aktif', 'Masa Aktif', 'trim|required' );
-            $val->set_rules('no_kta_old', 'No KTA Lama', 'trim|required' );
-            if (empty($_FILES['foto_kta_old']['name'])){
-                $val->set_rules('foto_kta_old', 'Foto KTA Old', 'required', array('required' => 'Silahkan upload Foto KTA Lama') );
-            }
-        }
-        
-        $val->set_rules('no_identitas', 'No Identitas', 'trim|required');
-        $val->set_rules('nama', 'Nama', 'trim|required');
-        $val->set_rules('tmp_lhr', 'Tempat Lahir', 'trim|required');
-        $val->set_rules('tgl_lhr', 'Tanggal Lahir', 'trim|required');
-        $val->set_rules('alamat', 'Alamat', 'trim|required');
-        $val->set_rules('provinsiHidden', 'Provinsi', 'trim|required',array('required' => 'Provinsi tidak ditemukan'));
-        $val->set_rules('kotaHidden', 'Kab/Kota', 'trim|required',array('required' => 'Kab/Kota tidak ditemukan'));
-        $val->set_rules('kecamatanHidden', 'Kecamatan', 'trim|required',array('required' => 'Kecamatan tidak ditemukan'));
-        $val->set_rules('no_telp', 'No. Telp', 'trim|required');
-        $val->set_rules('email', 'Email', 'trim|required|valid_email', array('valid_email' => "Format \"%s\" tidak sesuai") );
-        $val->set_rules('pekerjaan', 'Pekerjaan', 'trim|required');
-        $val->set_rules('agama', 'Agama', 'trim|required');
-        $val->set_rules('agreement', 'Pernyataan dan Persetujuan', 'trim|required', array('required' => 'Silahkan ceklist Pernyataan dan Persetujuan Anggota') );
+        $val->set_rules('totalpembayarankamar', 'Omset Pembayaran Kamar', 'trim|required|numeric');
+        $val->set_rules('totalbayarfasilitas', 'Omset Pembayaran Fasilitas', 'trim|required|numeric');
+        $val->set_rules('ttlomset', 'Total Omset', 'trim|required|numeric');
+        $val->set_rules('dpp', 'DPP', 'trim|required|numeric');
+        $val->set_rules('pajakterutang', 'Pajak Terhutang', 'trim|required|numeric');
 
         
 
@@ -113,81 +74,39 @@ class Sptpd extends MX_Controller {
         {                       
             $this->db->trans_begin();
             $id = ($this->input->post('id'))?$this->input->post('id'):0;
+            // print_r($_POST);die;
+
+            // history objek pajak
+            $hop = array(
+                'noobjekpajak' => $this->regex->_genRegex( $_POST['nopd'] , 'RGXQSL'),
+                'nama_wajibpajak' => $this->regex->_genRegex( $_POST['namawajibpajak'] , 'RGXQSL'),
+                'nama_usahaop' => $this->regex->_genRegex( $_POST['namausahaop'] , 'RGXQSL'),
+                'periode_awal' => $this->regex->_genRegex( $_POST['periodeawal'] , 'RGXQSL'),
+                'periode_akhir' => $this->regex->_genRegex( $_POST['periodeakhir'] , 'RGXQSL'),
+                'pajakterutang' => $this->regex->_genRegex( $val->set_value('pajakterutang') , 'RGXINT'),
+                'waktu_sptpd' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
+                'penetapan_pajak_official' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
+                'omset' => $this->regex->_genRegex( $val->set_value('ttlomset') , 'RGXINT'),
+            );
+            $this->db->insert('history_objek_pajak', $hop);
+            $id_hop = $this->db->insert_id();
+
+            $nosptpd = $id_hop;
 
             $dataexc = array(
-                'no_id' => $this->regex->_genRegex( $val->set_value('no_identitas') , 'RGXQSL'),
-                'nama' => $this->regex->_genRegex( $val->set_value('nama') , 'RGXQSL'),
-                'no_telp' => $this->regex->_genRegex( $val->set_value('no_telp') , 'RGXQSL'),
-                'email' => $this->regex->_genRegex( $val->set_value('email') , 'RGXQSL'),
-                'alamat_ktp' => $this->regex->_genRegex( $val->set_value('alamat') , 'RGXQSL'),
-                'provinsi' => $this->regex->_genRegex( $val->set_value('provinsiHidden') , 'RGXQSL'),
-                'kabkota' => $this->regex->_genRegex( $val->set_value('kotaHidden') , 'RGXQSL'),
-                'kecamatan' => $this->regex->_genRegex( $val->set_value('kecamatanHidden') , 'RGXQSL'),
-                'pekerjaan' => $this->regex->_genRegex( $val->set_value('pekerjaan') , 'RGXQSL'),
-                'kabkota' => $this->regex->_genRegex( $val->set_value('kotaHidden') , 'RGXQSL'),
-                'tmp_lhr' => $this->regex->_genRegex( $val->set_value('tmp_lhr') , 'RGXQSL'),
-                'tgl_lhr' => $this->regex->_genRegex( $val->set_value('tgl_lhr') , 'RGXQSL'),
-                'agama' => $this->regex->_genRegex( $val->set_value('agama') , 'RGXQSL'),
-                'jenis_anggota' => $this->regex->_genRegex( strtoupper($_POST['jenis_anggota']) , 'RGXQSL'),
-                'tgl_register' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
-                'tipe_anggota' => $this->regex->_genRegex( $_POST['tipe_anggota'] , 'RGXQSL'),
-                'is_active' => $this->regex->_genRegex( 'N' , 'RGXQSL'),
+                'nosptpd' => $this->regex->_genRegex( $nosptpd , 'RGXINT'),
+                'tglsetor' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
+                'totalpembayarankamar' => $this->regex->_genRegex( $val->set_value('totalpembayarankamar') , 'RGXINT'),
+                'totalbayarfasilitas' => $this->regex->_genRegex( $val->set_value('totalbayarfasilitas') , 'RGXINT'),
+                'jlhpembayaran' => $this->regex->_genRegex( $val->set_value('ttlomset') , 'RGXINT'),
+                'dpp' => $this->regex->_genRegex( $val->set_value('dpp') , 'RGXINT'),
+                'trfpajak' => $this->regex->_genRegex( $val->set_value('trfpajak') , 'RGXINT'),
+                'pajakterutang' => $this->regex->_genRegex( $val->set_value('pajakterutang') , 'RGXINT'),
+                'tglsistem' => $this->regex->_genRegex( date('Y-m-d H:i:s') , 'RGXQSL'),
+                'id_hop' => $this->regex->_genRegex( $nosptpd , 'RGXINT'),
             );
 
-            if($_POST['tipe_anggota'] == 'old'){
-                $dataexc['no_kta_old'] = $_POST['no_kta_old'];
-                $dataexc['masa_aktif'] = $_POST['masa_aktif'];
-
-                if(isset($_FILES['foto_kta_old']['name'])){
-                    /*hapus dulu file yang lama*/
-                    if( $id != 0 ){
-                        $file_kta_old_ex = $this->Sptpd->get_by_id($id);
-                        if ($file_kta_old_ex->foto_kta_old != NULL) {
-                            unlink(PATH_IMG_DEFAULT.$file_kta_old_ex->foto_kta_old.'');
-                        }
-                    }
-                    $dataexc['foto_kta_old'] = $this->upload_file->doUpload('foto_kta_old', PATH_IMG_DEFAULT);
-                }
-            }
-
-            if(isset($_FILES['file_identitas']['name'])){
-                /*hapus dulu file yang lama*/
-                if( $id != 0 ){
-                    $file_ex = $this->Sptpd->get_by_id($id);
-                    if ($file_ex->scan_identitas != NULL) {
-                        unlink(PATH_IMG_DEFAULT.$file_ex->scan_identitas.'');
-                    }
-                }
-                $dataexc['scan_identitas'] = $this->upload_file->doUpload('file_identitas', PATH_IMG_DEFAULT);
-            }
-
-            if(isset($_FILES['pas_foto']['name'])){
-                /*hapus dulu file yang lama*/
-                if( $id != 0 ){
-                    $file_ex = $this->Sptpd->get_by_id($id);
-                    if ($file_ex->pas_foto != NULL) {
-                        unlink(PATH_IMG_DEFAULT.$file_ex->pas_foto.'');
-                    }
-                }
-                $dataexc['pas_foto'] = $this->upload_file->doUpload('pas_foto', PATH_IMG_DEFAULT);
-            }
-
-            
-            if($id==0){
-                $dataexc['created_date'] = date('Y-m-d H:i:s');
-                $dataexc['created_by'] = json_encode(array('user_id' =>'register user', 'fullname' => $_POST['nama']));
-                $dataexc['updated_date'] = date('Y-m-d H:i:s');
-                $dataexc['updated_by'] = json_encode(array('user_id' =>'register user', 'fullname' => $_POST['nama']));
-                /*save post data*/
-                $this->Sptpd->save($dataexc);
-                $newId = $this->db->insert_id();
-            }else{
-                $dataexc['updated_date'] = date('Y-m-d H:i:s');
-                $dataexc['updated_by'] = json_encode(array('user_id' =>'register user', 'fullname' => $_POST['nama']));
-                /*update record*/
-                $this->Sptpd->update(array('id' => $id), $dataexc);
-                $newId = $id;
-            }
+            $this->db->insert('sptpdhotel', $dataexc);
 
             if ($this->db->trans_status() === FALSE)
             {

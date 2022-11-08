@@ -148,7 +148,8 @@ class References extends MX_Controller {
 	public function getUsaha()
 	{
         $query = $this->db->order_by('nama_usaha', 'ASC')
-                          ->get('objek_pajak')->result();
+							->where('npwpd', $_POST['npwpd'])
+							->get('objek_pajak')->result();
 		
 		$arrResult = [];
 		foreach ($query as $key => $value) {

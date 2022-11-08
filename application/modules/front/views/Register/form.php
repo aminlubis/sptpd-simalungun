@@ -154,20 +154,20 @@
       
       $('#form-default').ajaxForm({
         beforeSend: function() {
-            
+            achtungShowFadeIn();  
         },
         uploadProgress: function(event, position, total, percentComplete) {
         },
         complete: function(xhr) {     
           var data=xhr.responseText;
           var jsonResponse = JSON.parse(data);
-          achtungShowFadeIn();  
+        //   achtungShowFadeIn();  
           if(jsonResponse.status === 200){
             $.achtung({message: jsonResponse.message, timeout:5});
             $('#page-area-content').html('<div class="alert alert-success"><strong style="font-size: 14px"><i class="fa fa-check-circle green"></i> Sukses</strong><br> Terima kasih telah Mendaftar Wajib Pajak, data anda akan segera diproses oleh petugas kami.</div>');
           }else{
             $.achtung({message: jsonResponse.message, timeout:5, className: 'achtungFail'});
-            ('#page-area-content').html('<div class="alert alert-danger"><strong><i class="fa fa-times-circle red"></i> Gagal !</strong><br>Maaf, proses Registrasi Wajib Pajak gagal dilakukan, silahkan coba beberapa saat lagi.</div>');
+            $('#page-area-content').html('<div class="alert alert-danger"><strong><i class="fa fa-times-circle red"></i> Gagal !</strong><br>Maaf, proses Registrasi Wajib Pajak gagal dilakukan, silahkan coba beberapa saat lagi.</div>');
           }
           achtungHideLoader();
         }
