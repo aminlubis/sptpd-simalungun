@@ -24,7 +24,7 @@
 
                 <!-- hidden -->
                 <input type="hidden" name="namawajibpajak" value="<?php echo $profil_wp->nama?>">
-                <input type="hiddenxx" name="nama_usaha_op" id="nama_usaha_op" value="">
+                <input type="hidden" name="nama_usaha_op" id="nama_usaha_op" value="">
                 <div>
                     <label for="form-field-mask-1">
                         Pilih Objek Pajak atau Usaha Anda :
