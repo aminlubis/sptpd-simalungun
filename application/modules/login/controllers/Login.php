@@ -22,12 +22,22 @@ class Login extends MX_Controller {
 
     }
 
+    public function form() {
+        $data = array(
+            'title' => 'Ganti Password',
+            'breadcrumbs' => 'Form ganti password'
+        );
+        $this->load->view('form', $data);
+
+    }
+
     public function process(){
 
         /*post username*/
         $username = $this->regex->_genRegex($this->input->post('username'), 'RGXQSL');
         /*hash password bcrypt*/
         $password = $this->input->post('password');
+        $level = $this->input->post('user_level');
 
         // form validation
         $this->form_validation->set_rules('username', 'Username', 'trim|required');
@@ -50,7 +60,7 @@ class Login extends MX_Controller {
             $this->session->sess_expire_on_close = FALSE;
 
             /*check username and password exist*/
-            $result = $this->login_model->check_account($username,$password);
+            $result = $this->login_model->check_account($username,$password, $level);
             if($result){
                 /*clear token existing or before*/
                 // $this->login_model->clear_token($result->user_id);

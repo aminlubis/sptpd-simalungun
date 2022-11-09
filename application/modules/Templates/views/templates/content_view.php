@@ -166,6 +166,7 @@
               <b class="arrow"></b>
             </li>
 
+            <?php if(in_array($this->session->userdata('user')->user_level, array(2))) :?>
             <li class="hover">
               <a href="#" onclick="getMenu('front/Register/form_register/<?php echo $this->session->userdata('user')->noktp?>')" class="dropdown-toggle">
                 <i class="menu-icon fa fa-user"></i>
@@ -217,10 +218,10 @@
                 </li>
               </ul><div class="scroll-track scroll-detached no-track scroll-thin scroll-margin scroll-visible" style="display: none; top: 69px; left: 183px;"><div class="scroll-bar" style="top: 0px;"></div></div>
             </li>
-            
 
-            
+            <?php endif; ?>
 
+            <?php if(in_array($this->session->userdata('user')->user_level, array(1, 2))) :?>
             <li class="hover">
               <a href="#" onclick="getMenu('Verifikasi')" class="dropdown-toggle">
                 <i class="menu-icon fa fa-search"></i>
@@ -232,7 +233,20 @@
             </li>
 
             <li class="hover">
-              <a href="#" onclick="getMenu('Sptpd/form')" class="dropdown-toggle">
+              <a href="#" onclick="getMenu('setting/Tmp_user')" class="dropdown-toggle">
+                <i class="menu-icon fa fa-user"></i>
+                <span class="menu-text">
+                  Pengguna
+                </span>
+                <b class="arrow fa fa-angle-down"></b>
+              </a>
+            </li>
+
+            <?php endif; ?>
+
+            <?php if(in_array($this->session->userdata('user')->user_level, array(1,2))) :?>
+            <li class="hover">
+              <a href="#" onclick="getMenu('change-password')" class="dropdown-toggle">
                 <i class="menu-icon fa fa-lock"></i>
                 <span class="menu-text">
                   Ganti Password
@@ -250,6 +264,7 @@
                 <b class="arrow fa fa-angle-down"></b>
               </a>
             </li>
+            <?php endif; ?>
 
           </ul>
         </div>

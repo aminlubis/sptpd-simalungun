@@ -427,7 +427,7 @@ final Class Master {
 
    		$CI =&get_instance();
    		$CI->load->library('session');
-   		$sess_role = $CI->session->userdata('user')->role;
+   		$sess_role = $CI->session->userdata('user')->user_level;
    		$html = '<br>';
 		$html .= '<div class="row"><div class="col-md-12">';
         $html .= '<b>DETAIL DATA</b><br>';
@@ -435,7 +435,7 @@ final Class Master {
    		$exp_field_origin = array('is_active','is_deleted','created_date','created_by','updated_date','updated_by','log_id');
 		   $merge_exp_field = array_merge($exp_field_origin, $exp_field);
 		$html .= '<table>';
-   		if($sess_role=='Admin Sistem'){
+   		if($sess_role==1){
             foreach ($fields as $key => $value) {
                 if(!in_array($value, $exp_field )){
                 	$html .= '<tr>';    

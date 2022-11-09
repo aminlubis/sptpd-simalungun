@@ -82,7 +82,8 @@ class Verifikasi extends MX_Controller {
             $no++;
             $row = array();
             $row[] = '<div class="center">'.$no.'</div>';
-            $row[] = '<div class="center">'.$row_list->nopd.'</div>';
+            $txt_nopd = (empty($row_list->no_pd))?'<span style="font-weight: bold; color: red; font-style: italic">Belum diverifikasi</span>':$row_list->nopd;
+            $row[] = '<div class="center">'.$txt_nopd.'</div>';
             $row[] = strtoupper($row_list->nama_usaha).'<br>No. Telp : '.$row_list->telp;
             $row[] = $row_list->noizinusaha.'<br>'.$this->tanggal->formatDateFormDmy($row_list->tanggal_awal_usaha).' s/d '.$this->tanggal->formatDateFormDmy($row_list->tanggal_akhir_usaha);
             $row[] = $row_list->jenisusaha;

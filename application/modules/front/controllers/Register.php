@@ -151,6 +151,7 @@ class Register extends MX_Controller {
                     'password' => $this->bcrypt->hash_password($val->set_value('password')),
                     'tgl_daftar' => $this->regex->_genRegex($dataexc['tglsistem'],'RGXQSL'),
                     'mail_creating' => $this->regex->_genRegex(0,'RGXINT'),
+                    'user_level' => 2,
                 );
                 $this->db->insert('qrcode_user', $account);
                 $params = array_merge($dataexc, $account);

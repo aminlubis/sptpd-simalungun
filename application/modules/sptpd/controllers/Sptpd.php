@@ -19,8 +19,9 @@ class Sptpd extends MX_Controller {
          $data = array(
             'title' => COMPANY,
             'subtitle' => '',
-            
         );
+
+        // echo '<pre>';print_r($this->session->all_userdata());die;
 
         $this->load->view('sptpd/Sptpd/index', $data);
     }

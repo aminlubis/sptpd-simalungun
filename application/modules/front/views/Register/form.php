@@ -98,7 +98,7 @@
                 <input id="path_ktp" class="form-control" name="path_ktp" type="file" />
             </div>
         </div>
-
+        <?php if(isset($value) AND $value->path_ktp != NULL) : ?>
         <div class="form-group">
             <label class="col-md-1">&nbsp;</label>  
             <div class="col-md-2">
@@ -107,6 +107,7 @@
                 <a href="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" target="_blank"><img src="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" width="250px"></a>
             </div>
         </div>
+        <?php endif; ?>
         
         <?php if($this->session->userdata('logged') == false) :?>
         <br>

@@ -164,7 +164,20 @@ $(document).ready(function(){
                     <div class="col-md-4">
                       <br>
                       Foto KTP :<br>
-                      <a href="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" target="_blank"><img src="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" width="250px"></a>
+                      <a href="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" target="_blank"><img src="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" width="200px"></a>
+                      <br>
+                      <div style="padding-top: 10px">
+                        <label style="font-weight: bold">Verifikasi Data : </label>
+                        <div class="col-md-12 no-padding" >
+                          <select class="form-control">
+                            <option>-Pilih-</option>
+                            <option>Data Lengkap</option>
+                            <option>Data Belum Lengkap</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      
                     </div>
                   </div>
                   
@@ -251,7 +264,28 @@ $(document).ready(function(){
                       <br>
                       Dokumen Perizinan :<br>
                       <a href="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_file_izin?>" target="_blank"><i>Download Lampiran</i></a>
-                    </div>
+
+                      <div style="padding-top: 10px">
+                        <label style="font-weight: bold">Verifikasi Dokumen : </label>
+                        <div class="col-md-12 no-padding" >
+                          <select class="form-control">
+                            <option>-Pilih-</option>
+                            <option>Dokumen Lengkap</option>
+                            <option>Dokumen Belum Lengkap</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <br>
+                      
+                      <div style="margin-top: 20px">
+                        <label style="font-weight: bold">Petugas Verifikasi : </label>
+                        <div class="col-md-12 no-padding" >
+                          <input type="text" class="form-control" value="<?php echo $this->session->userdata('user')->username;?>">
+                        </div>
+                      </div>
+
+                  </div>
                 </div>
                 
 

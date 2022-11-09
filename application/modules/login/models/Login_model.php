@@ -8,9 +8,9 @@ class Login_model extends CI_Model {
         parent::__construct();
     }
 
-    public function check_account($usr, $pass) {
+    public function check_account($usr, $pass, $lvl) {
         /*get hash password*/
-        $data = $this->get_hash_password($usr);
+        $data = $this->get_hash_password($usr, $lvl);
         /*validate account*/
         if($data){
             if($this->bcrypt->check_password($pass, $data->password)){
@@ -23,10 +23,10 @@ class Login_model extends CI_Model {
         }
     }
 
-    public function get_hash_password($usr){
+    public function get_hash_password($usr, $lvl){
 
         $query = $this->db->select('qrcode_user.*')
-                          ->get_where('qrcode_user', array('username' => $usr, 'qrcode_user.status' => 'aktif'))->row();
+                          ->get_where('qrcode_user', array('username' => $usr, 'qrcode_user.status' => 'aktif', 'user_level' => $lvl))->row();
         if($query){
             return $query;
         }else{

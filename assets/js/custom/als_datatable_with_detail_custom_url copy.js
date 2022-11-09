@@ -87,22 +87,22 @@ $(document).ready(function() {
           console.log(searchIDs);
     });
 
-    // $('#btn_search_data').click(function (e) {
-    //       e.preventDefault();
-    //       $.ajax({
-    //       url: base_url+'/find_data?'+params,
-    //       type: "post",
-    //       data: $('#form_search').serialize(),
-    //       dataType: "json",
-    //       beforeSend: function() {
-    //         achtungShowLoader();  
-    //       },
-    //       success: function(data) {
-    //         achtungHideLoader();
-    //         find_data_reload(data,base_url);
-    //       }
-    //     });
-    //   });
+    $('#btn_search_data').click(function (e) {
+          e.preventDefault();
+          $.ajax({
+          url: base_url+'/find_data?'+params,
+          type: "post",
+          data: $('#form_search').serialize(),
+          dataType: "json",
+          beforeSend: function() {
+            achtungShowLoader();  
+          },
+          success: function(data) {
+            achtungHideLoader();
+            find_data_reload(data,base_url);
+          }
+        });
+      });
 
     $('#btn_reset_data').click(function (e) {
         e.preventDefault();
@@ -168,7 +168,7 @@ function delete_data(myid){
             $.achtung({message: jsonResponse.message, timeout:5});
             reload_table();
           }else{
-            $.achtung({message: jsonResponse.message, timeout:5, className: 'achtungFail'});
+            $.achtung({message: jsonResponse.message, timeout:5});
           }
           achtungHideLoader();
         }

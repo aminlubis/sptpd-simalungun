@@ -166,4 +166,13 @@ class References extends MX_Controller {
 		echo json_encode($query);
 	}
 
+	public function get_detail_table( $id )
+    {
+        $fields = $this->db->list_fields( $_GET['reftbl'] );
+        $data = $this->db->where($_GET['fldid'], $id)->get( $_GET['reftbl'] )->row();
+        $html = $this->master->show_detail_row_table( $fields, $data );      
+
+        echo json_encode( array('html' => $html) );
+    }
+
 }
