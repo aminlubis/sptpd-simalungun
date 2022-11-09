@@ -2,11 +2,11 @@
 <!-- content here -->
     <div class="page-header">
         <h1>
-        <?php echo $title?>
-        <small>
-            <i class="ace-icon fa fa-angle-double-right"></i>
-            <?php echo isset($subtitle)?$subtitle:''?>
-        </small>
+            <?php echo $title?>
+            <small>
+                <i class="ace-icon fa fa-angle-double-right"></i>
+                <?php echo isset($subtitle)?$subtitle:''?>
+            </small>
         </h1>
     </div>
     <div class="col-sm-12">
@@ -15,6 +15,8 @@
         
         <br>
         <p><b>BIODATA WAJIB PAJAK</b></p>
+        <input type="hidden" name="id" value="<?php echo isset($value->npwpd)?$value->npwpd:0?>">
+
         <div class="form-group">
             <label class="control-label col-md-1">Tgl Daftar</label>  
             <div class="col-md-2">
@@ -64,12 +66,12 @@
         <div class="form-group">
             <label class="control-label col-md-1">Kecamatan</label>
             <div class="col-md-2">
-                <input id="inputKecamatan" class="form-control" name="kecamatan" type="text" placeholder="Masukan 3 karakter" value="" readonly/>
+                <input id="inputKecamatan" class="form-control" name="kecamatan" type="text" placeholder="Masukan 3 karakter" value="<?php echo isset($value->nama_kecamatan)?$value->nama_kecamatan:''?>" readonly/>
                 <input type="hidden" name="kecamatanHidden" value="<?php echo isset($value->kecamatan)?$value->kecamatan:''?>" id="kecamatanHidden">
             </div>
             <label class="control-label col-md-1">Kelurahan</label>
             <div class="col-md-2">
-                <input id="inputKelurahan" class="form-control" name="kelurahan" type="text" placeholder="Masukan 3 karakter" value=""/>
+                <input id="inputKelurahan" class="form-control" name="kelurahan" type="text" placeholder="Masukan 3 karakter" value="<?php echo isset($value->nama_kelurahan)?$value->nama_kelurahan:''?>"/>
                 <input type="hidden" name="kelurahanHidden" value="<?php echo isset($value->kelurahan)?$value->kelurahan:''?>" id="kelurahanHidden">
             </div>
         </div>
@@ -88,12 +90,29 @@
                 <input id="telp" class="form-control" name="telp" type="text" value="<?php echo isset($value->telp)?$value->telp:''?>"/>
             </div>
         </div>
+        <br>
+        <p><b>UPLOAD FOTO KTP</b></p>
+        <div class="form-group">
+            <label class="control-label col-md-1">Upload file</label>  
+            <div class="col-md-2">
+                <input id="path_ktp" class="form-control" name="path_ktp" type="file" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-1">&nbsp;</label>  
+            <div class="col-md-2">
+                <br>
+                <i>Lampiran file :</i><br><br>
+                <a href="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" target="_blank"><img src="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" width="250px"></a>
+            </div>
+        </div>
         
         <?php if($this->session->userdata('logged') == false) :?>
         <br>
         <p><b>BUAT AKUN</b></p>
         <div class="form-group">
-            <label class="control-label col-md-2">Nama Akun</label>
+            <label class="control-label col-md-2">Email</label>
             <div class="col-md-2">
                 <input id="username" class="form-control" name="username" type="text"/>
             </div>
@@ -115,7 +134,13 @@
         <?php endif; ?>
 
         <div class="col-md-4 no-padding" style="margin-left: -6px !important; padding-top: 20px !important">
-            <button type="submit" id="btnSave" name="submit" class="btn btn-sm btn-primary">
+            <?php if($flag == 'update') :?>
+            <button type="submit" id="btnSave" name="submit" class="btn btn-sm btn-success">
+                <i class="ace-icon fa fa-check-circle icon-on-right bigger-110"></i>
+                Ubah Data
+            </button>
+            <?php else: ?>
+                <button type="submit" id="btnSave" name="submit" class="btn btn-sm btn-primary">
                 <i class="ace-icon fa fa-check-square-o icon-on-right bigger-110"></i>
                 Simpan Data
             </button>
@@ -123,6 +148,8 @@
                 <i class="ace-icon fa fa-refresh icon-on-right bigger-110"></i>
                 Reset Form
             </button>
+            <?php endif; ?>
+            
         </div>
 
         </form>
@@ -154,20 +181,19 @@
       
       $('#form-default').ajaxForm({
         beforeSend: function() {
-            achtungShowFadeIn();  
+            achtungShowFadeIn(); 
         },
         uploadProgress: function(event, position, total, percentComplete) {
         },
         complete: function(xhr) {     
           var data=xhr.responseText;
           var jsonResponse = JSON.parse(data);
-        //   achtungShowFadeIn();  
           if(jsonResponse.status === 200){
             $.achtung({message: jsonResponse.message, timeout:5});
-            $('#page-area-content').html('<div class="alert alert-success"><strong style="font-size: 14px"><i class="fa fa-check-circle green"></i> Sukses</strong><br> Terima kasih telah Mendaftar Wajib Pajak, data anda akan segera diproses oleh petugas kami.</div>');
+            $('#page-area-content').html('<div class="alert alert-success" style="margin: 50px"><strong style="font-size: 14px"><i class="fa fa-check-circle green"></i> Sukses</strong><br> Terima kasih telah Mendaftar Wajib Pajak, data anda akan segera diproses oleh petugas kami.</div>');
           }else{
             $.achtung({message: jsonResponse.message, timeout:5, className: 'achtungFail'});
-            $('#page-area-content').html('<div class="alert alert-danger"><strong><i class="fa fa-times-circle red"></i> Gagal !</strong><br>Maaf, proses Registrasi Wajib Pajak gagal dilakukan, silahkan coba beberapa saat lagi.</div>');
+            // $('#page-area-content').html('<br><br><div class="alert alert-danger"><strong><i class="fa fa-times-circle red"></i> Gagal !</strong><br>Maaf, proses Registrasi Wajib Pajak gagal dilakukan, silahkan coba beberapa saat lagi.</div>');
           }
           achtungHideLoader();
         }

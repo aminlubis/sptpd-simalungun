@@ -63,10 +63,10 @@
     .ace-nav > li > a {
       background-color: #383432 !important;
     }
-
     .page-header h1{
-      font-family: cursive;
+      font-size: 12px !important;
     }
+
 
   </style>
   <body class="no-skin">
@@ -170,7 +170,7 @@
               <a href="#" onclick="getMenu('front/Register/form_register/<?php echo $this->session->userdata('user')->noktp?>')" class="dropdown-toggle">
                 <i class="menu-icon fa fa-user"></i>
                 <span class="menu-text">
-                  Profil WP
+                  Wajib Pajak
                 </span>
 
                 <b class="arrow fa fa-angle-down"></b>
@@ -178,20 +178,54 @@
             </li>
 
             <li class="hover">
-              <a href="#" onclick="getMenu('Sptpd/form')" class="dropdown-toggle">
-                <i class="menu-icon fa fa-leaf"></i>
+              <a href="#" onclick="getMenu('objek_pajak/Objek_pajak')" class="dropdown-toggle">
+                <i class="menu-icon fa fa-globe"></i>
                 <span class="menu-text">
-                  Entri e-SPTPD
+                  Objek Pajak
                 </span>
-
                 <b class="arrow fa fa-angle-down"></b>
               </a>
             </li>
+
             <li class="hover">
-              <a href="#" onclick="getMenu('Sptpd/form')" class="dropdown-toggle">
-                <i class="menu-icon fa fa-history"></i>
+              <a href="#" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i>
+                <span class="menu-text"> S P T P D </span>
+
+                <b class="arrow fa fa-angle-down"></b>
+              </a>
+
+              <b class="arrow"></b>
+
+              <ul class="submenu can-scroll ace-scroll scroll-disabled" style="">
+                <li class="hover">
+                  <a href="#" onclick="getMenu('Sptpd/form')">
+                    <i class="menu-icon fa fa-caret-right"></i>
+                    Entri e-SPTPD
+                  </a>
+
+                  <b class="arrow"></b>
+                </li>
+
+                <li class="hover">
+                  <a href="#" onclick="getMenu('Sptpd')">
+                    <i class="menu-icon fa fa-caret-right"></i>
+                    Riwayat Entri
+                  </a>
+
+                  <b class="arrow"></b>
+                </li>
+              </ul><div class="scroll-track scroll-detached no-track scroll-thin scroll-margin scroll-visible" style="display: none; top: 69px; left: 183px;"><div class="scroll-bar" style="top: 0px;"></div></div>
+            </li>
+            
+
+            
+
+            <li class="hover">
+              <a href="#" onclick="getMenu('Verifikasi')" class="dropdown-toggle">
+                <i class="menu-icon fa fa-search"></i>
                 <span class="menu-text">
-                  Riwayat Entri
+                  Verifikasi Data
                 </span>
                 <b class="arrow fa fa-angle-down"></b>
               </a>
@@ -208,7 +242,7 @@
             </li>
 
             <li class="hover">
-              <a href="#" onclick="getMenu('Sptpd/form')" class="dropdown-toggle">
+              <a href="<?php echo base_url()?>login/logout">
                 <i class="menu-icon fa fa-sign-out"></i>
                 <span class="menu-text">
                   Logout
@@ -220,11 +254,11 @@
           </ul>
         </div>
       </div>
-    <div class="ace-scroll nav-scroll scroll-disabled">
-      <div class="scroll-track" style="display: none;">
-      <div class="scroll-bar" style="top: 0px; transition-property: top; transition-duration: 0.1s;"></div></div>
-      <div class="scroll-content" style=""><div>
-
+      <div class="ace-scroll nav-scroll scroll-disabled">
+        <div class="scroll-track" style="display: none;">
+          <div class="scroll-bar" style="top: 0px; transition-property: top; transition-duration: 0.1s;"></div>
+        </div>
+        <div class="scroll-content" style=""><div>
       </div>
     </div>
   </div>
@@ -236,21 +270,20 @@
         <div class="main-content-inner">
           <!-- /section:basics/content.breadcrumbs -->
           <div class="page-content">
-          
+            <div class="page-header">
+              <span>Nomor Wajib Pajak : <br><b><?php echo $profil_wp->npwpd?></b> | <i>registered at <?php echo $this->tanggal->formatDateFormDmy($profil_wp->tgldaftar)?></i></span><br>
+              <span style="font-weight: bold; font-size: 16px"><?php echo $profil_wp->nama?> [ <?php echo $profil_wp->noktp?> ]</span>
+              <!-- hidden -->
+              <input type="hidden" name="namawajibpajak" value="<?php echo $profil_wp->nama?>">
+              <input type="hidden" name="namausahaop" id="namausahaop" value="">
+              
+            </div>
+            
               <!-- PAGE CONTENT BEGINS -->
               <div id="page-area-content">
                 <div class="row">
                   <!-- content here -->
-                    <div class="page-header">
-                        <h1>
-                          Selamat Datang
-                          <small>
-                            <i class="ace-icon fa fa-angle-double-right"></i>
-                            <marquee style="width:80%; font-style: italic; font-size: 14px !important; color: black">Selamat datang di aplikasi e-SPTPD Online, silahkan Daftarkan Wajib Pajak Anda dsini.</marquee>
-                          </small>
-                        </h1>
-                      </div>
-          
+                    
                     <div id="content_graph"></div>
                     
                   <!-- end content here -->

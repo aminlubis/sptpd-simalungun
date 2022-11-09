@@ -20,11 +20,16 @@ class Register extends MX_Controller {
          $data = array(
             'title' => COMPANY,
             'subtitle' => '',
-            
         );
 
         $this->load->view('Register/index', $data);
         
+    }
+
+    public function konfirmasi_email(){
+        if($this->Register->confirm()){
+            $this->load->view('Register/konfirmasi_sukses_view');
+        }
     }
 
     public function form_register($id='') {
@@ -68,9 +73,10 @@ class Register extends MX_Controller {
         // print_r($_POST);die;
         $this->load->library('form_validation');
         $val = $this->form_validation;
-        
+
+        $id = ($this->input->post('id'))?$this->input->post('id'):0;
+
         $val->set_rules('tgldaftar', 'Tanggal Daftar', 'trim|required');
-        $val->set_rules('no_ktp', 'No KTP', 'trim|required|min_length[15]|max_length[16]|numeric|is_unique[wajibpajak.noktp]', array('min_length' => 'No KTP Minimal 15 Karakter', 'max_length' => 'No KTP Maksimal 16 Karakter', 'numeric' => 'No KTP Harus diisi Angka', 'is_unique' => 'No KTP anda sudah terdaftar Wajib Pajak'));
         $val->set_rules('nama', 'Nama WP', 'trim|required|min_length[5]', array('min_length' => 'Nama WP minimal 5 karakter'));
         $val->set_rules('alamat', 'Alamat', 'trim|required');
         $val->set_rules('tempatlahir', 'Tempat Lahir', 'trim|required');
@@ -79,9 +85,16 @@ class Register extends MX_Controller {
         $val->set_rules('kelurahanHidden', 'Kelurahan', 'trim|required');
         $val->set_rules('telp', 'No. Telp/WA', 'trim|required');
         $val->set_rules('kodepos', 'Kode POS', 'trim|required');
-        $val->set_rules('username', 'Nama Pengguna', 'trim|required|is_unique[qrcode_user.username]', array('is_unique' => 'Nama Pengguna sudah digunakan'));
-        $val->set_rules('konfirm_password', 'Konfirmasi Password', 'required|matches[password]', array('matches' => 'Konfirmasi Kata Sandi tidak sesuai'));
-        $val->set_rules('password', 'Konfirmasi Password', 'trim|required|min_length[6]', array('min_length' => 'Kata Sandi minimal 6 karakter'));
+       
+
+        if($id == 0){
+            $val->set_rules('no_ktp', 'No KTP', 'trim|required|min_length[15]|max_length[16]|numeric|is_unique[wajibpajak.noktp]', array('min_length' => 'No KTP Minimal 15 Karakter', 'max_length' => 'No KTP Maksimal 16 Karakter', 'numeric' => 'No KTP Harus diisi Angka', 'is_unique' => 'No KTP anda sudah terdaftar Wajib Pajak'));
+            $val->set_rules('username', 'Nama Pengguna', 'trim|required|valid_email|is_unique[qrcode_user.username]', array('is_unique' => 'Nama Pengguna sudah digunakan', 'valid_email' => 'Mohon masukan sesuai dengan format Email'));
+            $val->set_rules('konfirm_password', 'Konfirmasi Password', 'required|matches[password]', array('matches' => 'Konfirmasi Kata Sandi tidak sesuai'));
+            $val->set_rules('password', 'Konfirmasi Password', 'trim|required|min_length[6]', array('min_length' => 'Kata Sandi minimal 6 karakter'));
+        }else{
+            $val->set_rules('no_ktp', 'No KTP', 'trim|required');
+        }
 
         $val->set_message('required', "Silahkan isi field \"%s\"");
 
@@ -93,13 +106,10 @@ class Register extends MX_Controller {
         else
         {                       
             $this->db->trans_begin();
-            $id = ($this->input->post('id'))?$this->input->post('id'):0;
-            $urutan = $this->db->select('(max(no_urut)+1) as urutan')->from('wajibpajak')->get()->row();
-            $npwpd = sprintf("%04d-%03d",$urutan->urutan,$_POST['kelurahanHidden']);
+            
+            
 
             $dataexc = array(
-                'npwpd' => $this->regex->_genRegex( $npwpd, 'RGXQSL'),
-                'no_urut' => $this->regex->_genRegex( $urutan->urutan, 'RGXQSL'),
                 'tgldaftar' => $this->regex->_genRegex( $val->set_value('tgldaftar'), 'RGXQSL'),
                 'noktp' => $this->regex->_genRegex( $val->set_value('no_ktp'), 'RGXQSL'),
                 'nama' => $this->regex->_genRegex( $val->set_value('nama'), 'RGXQSL'),
@@ -113,8 +123,25 @@ class Register extends MX_Controller {
                 'kodepos' => $this->regex->_genRegex( $val->set_value('kodepos'), 'RGXQSL'),
                 'tglsistem' => date('Y-m-d H:i:s'),
             );
+
+            if(isset($_FILES['path_ktp']['name'])){
+                /*hapus dulu file yang lama*/
+                if( $id != 0 ){
+                    $profile = $this->Register->get_by_id($dataexc['noktp']);
+                    if ($profile->path_ktp != NULL) {
+                        unlink(PATH_FILE_DEFAULT.$profile->path_ktp.'');
+                    }
+                }
+                $dataexc['path_ktp'] = $this->upload_file->doUpload('path_ktp', PATH_FILE_DEFAULT);
+            }
+
             
             if($id==0){
+                $urutan = $this->db->select('(max(no_urut)+1) as urutan')->from('wajibpajak')->get()->row();
+                $npwpd = sprintf("%04d-%03d",$urutan->urutan,$_POST['kelurahanHidden']);
+                $dataexc['npwpd'] = $npwpd;
+                $dataexc['no_urut'] = $urutan->urutan;
+
                 $this->Register->save($dataexc);
                 $newId = $this->db->insert_id();
                 // create account
@@ -123,10 +150,13 @@ class Register extends MX_Controller {
                     'noktp' => $this->regex->_genRegex($val->set_value('no_ktp'),'RGXQSL'),
                     'password' => $this->bcrypt->hash_password($val->set_value('password')),
                     'tgl_daftar' => $this->regex->_genRegex($dataexc['tglsistem'],'RGXQSL'),
+                    'mail_creating' => $this->regex->_genRegex(0,'RGXINT'),
                 );
                 $this->db->insert('qrcode_user', $account);
+                $params = array_merge($dataexc, $account);
+                $this->sendmail($params);
             }else{
-                $this->Register->update(array('id' => $id), $dataexc);
+                $this->Register->update(array('npwpd' => $id), $dataexc);
                 $newId = $id;
             }
 
@@ -142,6 +172,24 @@ class Register extends MX_Controller {
                 echo json_encode(array('status' => 200, 'message' => 'Proses Berhasil Dilakukan'));
             }
         }
+    }
+
+    public function sendmail($params){
+        $this->load->library('Mailer');
+        $params['base_url'] = base_url();
+        $params['email'] = $params['username'];
+        $html = $this->load->view('Templates/templates/email_template', $params, true);
+
+        $params['body'] = $html;
+        if($this->mailer->set_email_object($params)){
+            // update user creating mail
+            $this->db->where(array('username' => $params['email'], 'password' => $params['password']))->update('qrcode_user', array('mail_creating' => 1));
+        }
+
+		
+		
+
+        
     }
 
     

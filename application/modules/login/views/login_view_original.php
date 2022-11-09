@@ -141,7 +141,7 @@
                 var jsonResponse = JSON.parse(data);
 
                 if(jsonResponse.status === 200){
-                  window.location = '<?php echo base_url().'main'?>';
+                  window.location = '<?php echo base_url().'home'?>';
                 }else{
                   $.achtung({message: jsonResponse.message, timeout:5, className: 'achtungFail'});
                 }

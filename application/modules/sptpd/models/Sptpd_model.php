@@ -3,11 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Sptpd_model extends CI_Model {
 
-	var $table = 'objek_pajak';
-	var $column = array('objek_pajak.nama_usaha');
-	var $select = 'objek_pajak.*';
+	var $table = 'history_objek_pajak';
+	var $column = array('history_objek_pajak.nama_usaha');
+	var $select = 'b.npwpd, history_objek_pajak.*';
 
-	var $order = array('objek_pajak.id_izin_usaha' => 'DESC');
+	var $order = array('history_objek_pajak.id_hop' => 'DESC');
 
 	public function __construct()
 	{
@@ -17,7 +17,9 @@ class Sptpd_model extends CI_Model {
 	private function _main_query(){
 		$this->db->select($this->select);
 		$this->db->from($this->table);
-
+		$this->db->join('objek_pajak b','b.nopd=history_objek_pajak.noobjekpajak', 'LEFT');
+		$this->db->join('wajibpajak c','c.npwpd=b.npwpd', 'LEFT');
+		$this->db->where('c.noktp', $this->session->userdata('user')->noktp);
 
 	}
 
@@ -25,6 +27,7 @@ class Sptpd_model extends CI_Model {
 	{
 		
 		$this->_main_query();
+		
 
 		$i = 0;
 	
@@ -133,6 +136,11 @@ class Sptpd_model extends CI_Model {
 					->get()->row();
 		$nosptpd = $hop->id_hop + 1;
 		return $nosptpd;
+	}
+
+	public function get_objek_pajak($npwpd){
+		$objek_pajak = $this->db->get_where('objek_pajak', array('npwpd' => $npwpd));
+		return $objek_pajak;
 	}
 
 

@@ -85,10 +85,10 @@ class Login extends MX_Controller {
                             'menus' => NULL,
                             'logged'=>false
                             );
-        $this->login_model->clear_token($this->session->userdata('user')->user_id);
+        // $this->login_model->clear_token($this->session->userdata('user')->user_id);
         $this->session->unset_userdata($sess_data);
         $this->session->sess_destroy();
-        redirect(base_url().'login');
+        redirect(base_url());
     }
 
 

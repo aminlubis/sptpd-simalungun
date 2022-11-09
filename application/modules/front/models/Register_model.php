@@ -5,7 +5,7 @@ class Register_model extends CI_Model {
 
 	var $table = 'wajibpajak';
 	var $column = array('wajibpajak.nama');
-	var $select = 'wajibpajak.*';
+	var $select = 'wajibpajak.*, nama_kecamatan, nama_kelurahan';
 
 	var $order = array('wajibpajak.no_urut' => 'DESC');
 
@@ -17,6 +17,8 @@ class Register_model extends CI_Model {
 	private function _main_query(){
 		$this->db->select($this->select);
 		$this->db->from($this->table);
+		$this->db->join('kode_kecamatan','kode_kecamatan.kode_kecamatan=wajibpajak.kecamatan','left');
+		$this->db->join('kode_kelurahan','kode_kelurahan.kode_kelurahan=wajibpajak.kelurahan','left');
 	}
 
 	private function _get_datatables_query()
@@ -123,6 +125,19 @@ class Register_model extends CI_Model {
 	public function list_fields(){
 		return $this->db->list_fields( $this->table );
 	}
+
+	public function confirm(){
+		$query = $this->db->get_where('qrcode_user', array('username' => $_GET['email'], 'password' => $_GET['token']));
+		if($query->num_rows() > 0){
+			// update user
+			$this->db->where( array('username' => $_GET['email'], 'password' => $_GET['token']) )->update('qrcode_user', array('status' => 'aktif'));
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	
 
 
 }

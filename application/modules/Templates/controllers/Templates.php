@@ -28,6 +28,7 @@ class Templates extends MX_Controller {
 	{
         $this->load->library('master');
         $this->load->library('lib_menus');
+		$this->load->model('front/Register_model','Register');
         //echo '<pre>';print_r($this->session->all_userdata());die;
 		/*
 		|
@@ -41,10 +42,9 @@ class Templates extends MX_Controller {
 		{		
       // We get the name of the class that called this method so we
       // can get its view file.
-			$caller = debug_backtrace();
-			$caller_module = $caller[1]['class'];
-
-			// Get the default view file for the module and return as a string.
+		$caller = debug_backtrace();
+		$caller_module = $caller[1]['class'];
+		
     	$data['body'] = $this->load->view(ucfirst($caller_module).'/'.strtolower($caller_module).'_view', $data, TRUE);
 		}
 		
@@ -63,6 +63,10 @@ class Templates extends MX_Controller {
 		// $data['shortcut'] = $this->lib_menus->get_menus_shortcut($this->session->userdata('user')->user_id);
 		// $data['app'] = $this->db->get_where('tmp_profile_app', array('id' => 1))->row();
         // echo '<pre>';print_r($data['menu']);die;
+		$profil_wp = $this->Register->get_by_id($this->session->userdata('user')->noktp);
+		// Get the default view file for the module and return as a string.
+    	$data['profil_wp'] = $profil_wp;
+		
 		$this->load->view('templates/content_view', $data);
 		
 	}

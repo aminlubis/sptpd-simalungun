@@ -44,4 +44,13 @@
     </div>
 </div>
 
+<br>
+<p style="font-weight: bold">UPLOAD REKAP PENDAPATAN</p>
+<div class="form-group">
+    <label class="control-label col-md-2">Upload file</label>
+    <div class="col-md-2">
+        <input name="file" id="file" value=""  class="form-control" type="file">
+    </div>
+</div>
+
 

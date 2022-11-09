@@ -22,20 +22,22 @@ class Sptpd extends MX_Controller {
             
         );
 
-        $this->load->view('Sptpd/index', $data);
+        $this->load->view('sptpd/Sptpd/index', $data);
     }
+    
 
     public function form() {
         $this->output->enable_profiler(false);
         /*breadcrumb*/
         $this->breadcrumbs->push('Welcome', 'Sptpd/'.strtolower(get_class($this)));
+        $profil_wp = $this->Register->get_by_id($this->session->userdata('user')->noktp);
          $data = array(
             'title' => 'Form SPTPD',
             'subtitle' => COMPANY,
-            'profil_wp' => $this->Register->get_by_id($this->session->userdata('user')->noktp),
-            
+            'profil_wp' => $profil_wp,
+            'objek_pajak' => $this->Sptpd->get_objek_pajak($profil_wp->npwpd),
         );
-
+        // echo '<pre>';print_r($data);die;
         $this->load->view('sptpd/Sptpd/form', $data);
         
     }
@@ -48,6 +50,38 @@ class Sptpd extends MX_Controller {
         echo json_encode(array('html' => $html));
         
     }
+
+    public function get_data()
+    {
+        /*get data from model*/
+        $list = $this->Sptpd->get_datatables();
+        $data = array();
+        $no = $_POST['start'];
+        foreach ($list as $row_list) {
+            $no++;
+            $row = array();
+            $row[] = '<div class="center">'.$no.'</div>'; 
+            $row[] = '<div class="center">'.$row_list->noobjekpajak.'</div>';
+            $row[] = strtoupper($row_list->nama_usahaop);
+            $row[] = $row_list->periode_awal;
+            $row[] = $row_list->periode_akhir;
+            $row[] = $row_list->va_bayar;
+            $row[] = '<div style="text-align: right">'.number_format($row_list->omset).'</div>';
+            $row[] = '<div style="text-align: right">'.number_format($row_list->pajakterutang).'</div>';
+                   
+            $data[] = $row;
+        }
+
+        $output = array(
+                        "draw" => $_POST['draw'],
+                        "recordsTotal" => $this->Sptpd->count_all(),
+                        "recordsFiltered" => $this->Sptpd->count_filtered(),
+                        "data" => $data,
+                );
+        //output to json format
+        echo json_encode($output);
+    }
+
 
     public function process_1()
     {
