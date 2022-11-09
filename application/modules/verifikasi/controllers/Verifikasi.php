@@ -82,7 +82,7 @@ class Verifikasi extends MX_Controller {
             $no++;
             $row = array();
             $row[] = '<div class="center">'.$no.'</div>';
-            $txt_nopd = (empty($row_list->no_pd))?'<span style="font-weight: bold; color: red; font-style: italic">Belum diverifikasi</span>':$row_list->nopd;
+            $txt_nopd = (empty($row_list->nopd))?'<span style="font-weight: bold; color: red; font-style: italic">Belum diverifikasi</span>':'<b>'.$row_list->nopd.'</b>';
             $row[] = '<div class="center">'.$txt_nopd.'</div>';
             $row[] = strtoupper($row_list->nama_usaha).'<br>No. Telp : '.$row_list->telp;
             $row[] = $row_list->noizinusaha.'<br>'.$this->tanggal->formatDateFormDmy($row_list->tanggal_awal_usaha).' s/d '.$this->tanggal->formatDateFormDmy($row_list->tanggal_akhir_usaha);
@@ -91,6 +91,9 @@ class Verifikasi extends MX_Controller {
             $row[] = $row_list->alamat_usaha.', '.$row_list->kodepos_usaha;
             $row[] = $row_list->nama_kecamatan;
             $row[] = $row_list->nama_kelurahan;
+            if($row_list->is_verified == 1){
+
+            }
             $row[] = '<div class="center"><a href="#" onclick="getMenu('."'verifikasi/Verifikasi/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-primary"><i class="fa fa-search"></i> Verifikasi Data</a></div>';
                    
             $data[] = $row;
@@ -111,17 +114,8 @@ class Verifikasi extends MX_Controller {
         // print_r($_POST);die;
         $this->load->library('form_validation');
         $val = $this->form_validation;
-        $val->set_rules('jenispajak', 'Jenis Pajak', 'trim|required');
-        $val->set_rules('jenisusaha', 'Jenis Usaha', 'trim|required');
-        $val->set_rules('noizinusaha', 'No Izin Usaha', 'trim|required');
-        $val->set_rules('tanggal_awal_usaha', 'Tanggal Berlaku Izin', 'trim|required');
-        $val->set_rules('tanggal_akhir_usaha', 'Jatuh Tempo Masa Berlaku Izin', 'trim|required');
-        $val->set_rules('nama_usaha', 'Nama Usaha', 'trim|required');
-        $val->set_rules('alamat_usaha', 'Alamat Usaha', 'trim|required');
-        $val->set_rules('kecamatanHidden', 'Kecamatan', 'trim|required');
-        $val->set_rules('kelurahanHidden', 'Kelurahan', 'trim|required', array('required' => 'Silahkan pilih Kelurahan kembali'));
-        $val->set_rules('kodepos_usaha', 'Kelurahan', 'trim');
-        $val->set_rules('telp', 'No. Telp', 'trim|required');
+        $val->set_rules('verifikasi_data', 'Jenis Pajak', 'trim|required');
+        $val->set_rules('verifikasi_dokumen', 'Jenis Pajak', 'trim|required');
 
         $val->set_message('required', "Silahkan isi field \"%s\"");
 
@@ -135,26 +129,22 @@ class Verifikasi extends MX_Controller {
             $this->db->trans_begin();
             $id = ($this->input->post('id'))?$this->regex->_genRegex($this->input->post('id'),'RGXINT'):0;
 
-            $dataexc = array(
-                'kodejenispajak' => $this->regex->_genRegex($val->set_value('jenispajak'), 'RGXQSL'),
-                'idjenis_usaha' => $this->regex->_genRegex($val->set_value('jenisusaha'), 'RGXQSL'),
-                'noizinusaha' => $this->regex->_genRegex($val->set_value('noizinusaha'), 'RGXQSL'),
-                'tanggal_awal_usaha' => $this->regex->_genRegex($val->set_value('tanggal_awal_usaha'), 'RGXQSL'),
-                'tanggal_akhir_usaha' => $this->regex->_genRegex($val->set_value('tanggal_akhir_usaha'), 'RGXQSL'),
-                'nama_usaha' => $this->regex->_genRegex($val->set_value('nama_usaha'), 'RGXQSL'),
-                'alamat_usaha' => $this->regex->_genRegex($val->set_value('alamat_usaha'), 'RGXQSL'),
-                'kecamatan_usaha' => $this->regex->_genRegex($val->set_value('kecamatanHidden'), 'RGXQSL'),
-                'kode_kelurahan' => $this->regex->_genRegex($val->set_value('kelurahanHidden'), 'RGXQSL'),
-                'kodepos_usaha' => $this->regex->_genRegex($val->set_value('kodepos_usaha'), 'RGXQSL'),
-                'telp' => $this->regex->_genRegex($val->set_value('telp'), 'RGXQSL')
+            $verifikasi_data = array(
+                'is_verified' => $this->regex->_genRegex($val->set_value('verifikasi_data'), 'RGXINT'),
             );
+
+            // generate NOPD
+            $format_nopd = $this->Verifikasi->getNopd();
             
-            if($id==0){
-                $newId = $this->Verifikasi->save($dataexc);
-            }else{
-                $this->Verifikasi->update(array('id_izin_usaha' => $id), $dataexc);
-                $newId = $id;
-            }
+
+            $verifikasi_dokumen = array(
+                'nopd' => $this->regex->_genRegex($format_nopd, 'RGXQSL'),
+                'is_verified' => $this->regex->_genRegex($val->set_value('verifikasi_dokumen'), 'RGXINT'),
+            );
+
+            $this->db->where('npwpd', $_POST['npwpd'])->update('wajibpajak', $verifikasi_data);
+            $this->db->where('id_izin_usaha', $_POST['id'])->update('objek_pajak', $verifikasi_dokumen);
+            
             if ($this->db->trans_status() === FALSE)
             {
                 $this->db->trans_rollback();

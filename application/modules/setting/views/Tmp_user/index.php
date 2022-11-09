@@ -12,7 +12,8 @@
     </div><!-- /.page-header -->
 
     <div class="clearfix" style="margin-bottom:-5px">
-      
+      <a href="#" class="btn btn-xs btn-primary" onclick="getMenu('setting/Tmp_user/form')"><i class="fa fa-plus"></i> Tambah Pengguna</a>
+      <a href="#" class="btn btn-xs btn-danger" id="button_delete"><i class="ace-icon fa fa-trash-o bigger-50"></i>Hapus yang dipilih</a>
 
     </div>
     <hr class="separator">
@@ -31,9 +32,10 @@
           <th>Nama</th>
           <th>Email</th>
           <th>No KTP</th>
-          <th>Status</th>
-          <th>Tanggal Aktif</th>
-          <th>Level</th>
+          <th width="120px">Status</th>
+          <th width="150px">Tanggal Aktif</th>
+          <th width="120px">Level</th>
+          <th width="150px">Aksi</th>
         </tr>
       </thead>
       <tbody>

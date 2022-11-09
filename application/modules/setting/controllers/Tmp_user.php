@@ -61,6 +61,31 @@ class Tmp_user extends MX_Controller {
         /*load form view*/
         $this->load->view('Tmp_user/form', $data);
     }
+
+    public function form_reset($id='')
+    {
+        /*if id is not null then will show form edit*/
+        if( $id != '' ){
+            /*breadcrumbs for edit*/
+            $this->breadcrumbs->push('Edit '.strtolower($this->title).'', 'Tmp_user/'.strtolower(get_class($this)).'/'.__FUNCTION__.'/'.$id);
+            /*get value by id*/
+            $data['value'] = $this->Tmp_user->get_by_id($id);
+            /*initialize flag for form*/
+            $data['flag'] = "update";
+        }else{
+            /*breadcrumbs for create or add row*/
+            $this->breadcrumbs->push('Add '.strtolower($this->title).'', 'Tmp_user/'.strtolower(get_class($this)).'/form');
+            /*initialize flag for form add*/
+            $data['flag'] = "create";
+        }
+        /*title header*/
+        $data['title'] = $this->title;
+        /*show breadcrumbs*/
+        $data['breadcrumbs'] = $this->breadcrumbs->show();
+        /*load form view*/
+        $this->load->view('Tmp_user/form_reset', $data);
+    }
+
     /*function for view data only*/
     public function show($id)
     {
@@ -94,12 +119,20 @@ class Tmp_user extends MX_Controller {
             $row[] = '';
             $row[] = $row_list->id;
             $row[] = '<div class="center">'.$row_list->id.'</div>';
-            $row[] = strtoupper($row_list->nama);
+            $row[] = strtoupper($row_list->fullname);
             $row[] = $row_list->username;
             $row[] = $row_list->noktp;
-            $row[] = $row_list->status;
+            $status = ($row_list->status_user == 'aktif') ? '<label class="label label-success">Aktif</label>' :'<label class="label label-warning">Non Aktif</label>';
+            $is_deleted = ($row_list->is_deleted == 'Y') ? '<label class="label label-danger">Dihapus</label>' :$status;
+            $row[] = '<div class="center">'.$is_deleted.'</div>';
             $row[] = $row_list->tgl_daftar;
-            $row[] = $row_list->user_level;
+            $row[] = '<div class="center">'.$row_list->level.'</div>';
+            if($row_list->user_level == 1){
+                $row[] = '<div class="center"><a href="#" class="btn btn-xs btn-success" onclick="getMenu('."'setting/Tmp_user/form/".$row_list->id."')".'"><i class="fa fa-pencil"></i> Ubah</a><a href="#" class="btn btn-xs btn-danger" onclick="delete_data(' . "'" . $row_list->id . "'" . ')"><i class="fa fa-trash"></i> Hapus</a></div>';
+            }else{
+                $row[] = '<div class="center"><a href="#" class="btn btn-xs btn-inverse" onclick="getMenu('."'setting/Tmp_user/form_reset/".$row_list->id."')".'"><i class="fa fa-refresh"></i> Resep Password</a></div>';
+
+            }
                    
             $data[] = $row;
         }
@@ -116,17 +149,17 @@ class Tmp_user extends MX_Controller {
 
     public function process()
     {
-       
+        // print_r($_POST);die;
         $this->load->library('form_validation');
         $val = $this->form_validation;
-        $val->set_rules('fullname', 'Fullname', 'trim|required');
-        $val->set_rules('email', 'Email', 'trim|required|valid_email');
-        $val->set_rules('username', 'Username', 'trim|required');
+        $val->set_rules('fullname', 'Password', 'trim|required');
         $val->set_rules('password', 'Password', 'trim|required|min_length[6]');
         $val->set_rules('confirm', 'Password Confirmation', 'trim|required|matches[password]');
-        $val->set_rules('is_active', 'Is Active', 'trim|xss_clean');
-        $val->set_rules('pic_id', 'Is Active', 'trim|xss_clean');
-        $val->set_rules('flag_user', 'Jenis Pengguna', 'trim|xss_clean');
+        if($_POST['id'] == 0){
+            $val->set_rules('username', 'Email', 'trim|required|valid_email|is_unique[qrcode_user.username]', array('is_unique' => 'Email sudah pernah terdaftar'));
+        }else{
+            $val->set_rules('username', 'Email', 'trim|required');
+        }
 
         $val->set_message('required', "Silahkan isi field \"%s\"");
         $val->set_message('matches', "\"%s\" tidak sesuai dengan password");
@@ -146,27 +179,17 @@ class Tmp_user extends MX_Controller {
             $dataexc = array(
                 'fullname' => $this->regex->_genRegex($val->set_value('fullname'),'RGXQSL'),
                 'username' => $this->regex->_genRegex($val->set_value('username'),'RGXQSL'),
-                'email' => $this->regex->_genRegex($val->set_value('email'),'RGXQSL'),
                 'password' => $this->bcrypt->hash_password($val->set_value('password')),
-                'is_active' => $this->regex->_genRegex($val->set_value('is_active'),'RGXAZ'),
-                'is_deleted' => $this->regex->_genRegex('N','RGXAZ'),
-                'flag_user' => $this->regex->_genRegex($val->set_value('flag_user'),'RGXAZ'),
-                'pic_id' => $this->regex->_genRegex($val->set_value('pic_id'),'RGXINT'),
+                'status' => 'aktif',
+                'user_level' => 1,
+                'is_deleted' => 'N',
             );
-            //print_r($dataexc);die;
+            
             if($id==0){
-                $dataexc['created_date'] = date('Y-m-d H:i:s');
-                $dataexc['created_by'] = json_encode(array('id' =>$this->regex->_genRegex($this->session->userdata('user')->id,'RGXINT'), 'fullname' => $this->regex->_genRegex($this->session->userdata('user')->fullname,'RGXQSL')));
-                /*save post data*/
                 $newId = $this->Tmp_user->save($dataexc);
-                $this->logs->save('tmp_user', $newId, 'insert new record', json_encode($dataexc), 'id');
             }else{
-                $dataexc['updated_date'] = date('Y-m-d H:i:s');
-                $dataexc['updated_by'] = json_encode(array('id' =>$this->regex->_genRegex($this->session->userdata('user')->id,'RGXINT'), 'fullname' => $this->regex->_genRegex($this->session->userdata('user')->fullname,'RGXQSL')));
-                /*update record*/
                 $this->Tmp_user->update(array('id' => $id), $dataexc);
                 $newId = $id;
-                $this->logs->save('tmp_user', $newId, 'update record', json_encode($dataexc), 'id');
             }
             if ($this->db->trans_status() === FALSE)
             {
@@ -182,24 +205,16 @@ class Tmp_user extends MX_Controller {
         }
     }
 
-    public function process_profile_user()
+    public function process_reset()
     {
-
+        // print_r($_POST);die;
         $this->load->library('form_validation');
         $val = $this->form_validation;
-        $val->set_rules('fullname_user', 'Nama Lengkap', 'trim|required');
-        $val->set_rules('pob', 'Tempat Lahir', 'trim|required');
-        $val->set_rules('dob', 'Tanggal Lahir', 'trim|required');
-        $val->set_rules('no_telp', 'No Telp', 'trim');
-        $val->set_rules('address', 'Alamat', 'trim');
-        $val->set_rules('facebook', 'Facebook', 'trim');
-        $val->set_rules('twitter', 'Twitter', 'trim');
-        $val->set_rules('instagram', 'Instagram', 'trim');
-        $val->set_rules('about_me', 'Quote', 'trim');
-        $val->set_rules('gender', 'Gender', 'trim|required');
-        $val->set_rules('id', 'User ID', 'trim|required');
-
+        $val->set_rules('password', 'Password', 'trim|required|min_length[6]');
         $val->set_message('required', "Silahkan isi field \"%s\"");
+        $val->set_message('matches', "\"%s\" tidak sesuai dengan password");
+        $val->set_message('valid_email', "\"%s\" tidak valid");
+        $val->set_message('min_length', "\"%s\" minimal 6 karakter");
 
         if ($val->run() == FALSE)
         {
@@ -209,61 +224,16 @@ class Tmp_user extends MX_Controller {
         else
         {                       
             $this->db->trans_begin();
-            $id = ($this->input->post('profile_id'))?$this->regex->_genRegex($this->input->post('profile_id'),'RGXINT'):0;
+            $id = ($this->input->post('id'))?$this->regex->_genRegex($this->input->post('id'),'RGXINT'):0;
 
             $dataexc = array(
-                'fullname' => $this->regex->_genRegex($val->set_value('fullname_user'),'RGXQSL'),
-                'pob' => $this->regex->_genRegex($val->set_value('pob'),'RGXQSL'),
-                'dob' => $this->regex->_genRegex($val->set_value('dob'),'RGXQSL'),
-                'address' => $this->regex->_genRegex($val->set_value('address'),'RGXQSL'),
-                'no_telp' => $this->regex->_genRegex($val->set_value('no_telp'),'RGXQSL'),
-                'facebook' => $this->regex->_genRegex($val->set_value('facebook'),'RGXQSL'),
-                'twitter' => $this->regex->_genRegex($val->set_value('twitter'),'RGXQSL'),
-                'instagram' => $this->regex->_genRegex($val->set_value('instagram'),'RGXQSL'),
-                'about_me' => $this->regex->_genRegex($val->set_value('about_me'),'RGXQSL'),
-                'gender' => $this->regex->_genRegex($val->set_value('gender'),'RGXAZ'),
-                'id' => $this->regex->_genRegex($val->set_value('id'),'RGXINT'),
+                'password' => $this->bcrypt->hash_password($val->set_value('password')),
+                'status' => 'aktif',
+                'is_deleted' => 'N',
             );
             
+            $this->Tmp_user->update(array('id' => $id), $dataexc);
 
-            if(isset($_FILES['images']['name'])){
-                /*hapus dulu file yang lama*/
-                if( $id != 0 ){
-                    $profile = $this->Tmp_user->get_by_id($val->set_value('id'));
-                    if ($profile->path_foto != NULL) {
-                        unlink(PATH_PHOTO_PROFILE_DEFAULT.$profile->path_foto.'');
-                    }
-                }
-
-                $dataexc['path_foto'] = $this->upload_file->doUpload('images', PATH_PHOTO_PROFILE_DEFAULT);
-            }
-
-            if(isset($_FILES['signature']['name'])){
-                /*hapus dulu file yang lama*/
-                if( $id != 0 ){
-                    $profile = $this->Tmp_user->get_by_id($val->set_value('id'));
-                    if ($profile->signature_path != NULL) {
-                        unlink(PATH_PHOTO_PROFILE_DEFAULT.$profile->signature_path.'');
-                    }
-                }
-                $dataexc['signature_path'] = $this->upload_file->doUpload('signature', PATH_PHOTO_PROFILE_DEFAULT);
-            }
-
-            //echo '<pre>';print_r($id);die;
-            if($id==0){
-                $dataexc['created_date'] = date('Y-m-d H:i:s');
-                $dataexc['created_by'] = json_encode(array('id' =>$this->regex->_genRegex($this->session->userdata('user')->id,'RGXINT'), 'fullname' => $this->regex->_genRegex($this->session->userdata('user')->fullname,'RGXQSL')));
-                $this->db->insert('tmp_user_profile', $dataexc);
-                $newId = $this->db->insert_id();
-                $this->logs->save('tmp_user_profile', $newId, 'insert new record on '.$this->title.' module', json_encode($dataexc),'id');
-            }else{
-                $dataexc['updated_date'] = date('Y-m-d H:i:s');
-                $dataexc['updated_by'] = json_encode(array('id' =>$this->regex->_genRegex($this->session->userdata('user')->id,'RGXINT'), 'fullname' => $this->regex->_genRegex($this->session->userdata('user')->fullname,'RGXQSL')));
-                $this->db->update('tmp_user_profile', $dataexc, array('id' => $id));
-                $newId = $id;
-                 /*save logs*/
-                $this->logs->save('tmp_user_profile', $newId, 'update record on '.$this->title.' module', json_encode($dataexc),'id');
-            }
             if ($this->db->trans_status() === FALSE)
             {
                 $this->db->trans_rollback();
@@ -272,6 +242,7 @@ class Tmp_user extends MX_Controller {
             else
             {
                 $this->db->trans_commit();
+                //redirect(base_url().'login/logout');
                 echo json_encode(array('status' => 200, 'message' => 'Proses Berhasil Dilakukan'));
             }
         }
@@ -283,7 +254,6 @@ class Tmp_user extends MX_Controller {
         $toArray = explode(',',$id);
         if($id!=null){
             if($this->Tmp_user->delete_by_id($toArray)){
-                $this->logs->save('tmp_user', $id, 'delete record', '', 'id');
                 echo json_encode(array('status' => 200, 'message' => 'Proses Hapus Data Berhasil Dilakukan'));
 
             }else{
@@ -294,48 +264,6 @@ class Tmp_user extends MX_Controller {
         }
         
     }
-
-    public function account_setting()
-    {
-        /*if id is not null then will show form edit*/
-        $id=$this->session->userdata('user')->id;
-
-        /*breadcrumbs for edit*/
-        $this->breadcrumbs->push('Account Setting', 'Tmp_user/'.strtolower(get_class($this)).'/'.__FUNCTION__.'/'.$id);
-        /*get value by id*/
-        $data['value'] = $this->Tmp_user->get_by_id($id);
-        /*echo '<pre>'; print_r($this->db->last_query());die;*/
-        /*initialize flag for form*/
-        $data['flag'] = "update";
-
-        /*title header*/
-        $data['title'] = 'Account Setting';
-        /*show breadcrumbs*/
-        $data['breadcrumbs'] = '';//$this->breadcrumbs->show();
-        /*load form view*/
-        $this->load->view('Tmp_user/form_account_setting', $data);
-    }
-
-    public function form_update_profile()
-    {
-        /*if id is not null then will show form edit*/
-        $id=$this->session->userdata('user')->id;
-        /*breadcrumbs for edit*/
-        $this->breadcrumbs->push('Update Profile Amin', 'Tmp_user/'.strtolower(get_class($this)).'/'.__FUNCTION__.'/'.$id);
-        /*get value by id*/
-        $data['value'] = $this->Tmp_user->get_by_id($id);
-        /*echo '<pre>'; print_r($this->session->all_userdata());die;*/
-        /*initialize flag for form*/
-        $data['flag'] = "update";
-
-        /*title header*/
-        $data['title'] = 'Profile '.$this->session->userdata('user')->fullname;
-        /*show breadcrumbs*/
-        $data['breadcrumbs'] = '';//$this->breadcrumbs->show();
-        /*load form view*/
-        $this->load->view('Tmp_user/form_update_profile', $data);
-    }
-
 
 }
 

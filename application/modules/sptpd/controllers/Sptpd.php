@@ -115,7 +115,7 @@ class Sptpd extends MX_Controller {
             $hop = array(
                 'noobjekpajak' => $this->regex->_genRegex( $_POST['nopd'] , 'RGXQSL'),
                 'nama_wajibpajak' => $this->regex->_genRegex( $_POST['namawajibpajak'] , 'RGXQSL'),
-                'nama_usahaop' => $this->regex->_genRegex( $_POST['namausahaop'] , 'RGXQSL'),
+                'nama_usahaop' => $this->regex->_genRegex( $_POST['nama_usaha_op'] , 'RGXQSL'),
                 'periode_awal' => $this->regex->_genRegex( $_POST['periodeawal'] , 'RGXQSL'),
                 'periode_akhir' => $this->regex->_genRegex( $_POST['periodeakhir'] , 'RGXQSL'),
                 'pajakterutang' => $this->regex->_genRegex( $val->set_value('pajakterutang') , 'RGXINT'),

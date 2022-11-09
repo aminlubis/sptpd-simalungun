@@ -110,5 +110,20 @@ class Verifikasi_model extends CI_Model {
 		return $this->db->update($this->table, array('is_deleted' => 'Y', 'is_active' => 'N'));
 	}
 
+	public function getNopd(){
+		// max num
+		$max_num = $this->db->get_where('objek_pajak', array('npwpd' => $_POST['npwpd']))->num_rows();
+		$strlen = strlen($max_num);
+
+		$setnul = '';
+		for ($i=0; $i < (4-$strlen); $i++) { 
+			$setnul .= '0';
+		}
+
+		$nopd = $_POST['npwpd'].'-0'.$_POST['kodejenispajak'].'-'.$_POST['kode_kelurahan'].'-'.$setnul.$max_num;
+
+		return $nopd;
+	}
+
 
 }

@@ -20,7 +20,7 @@
        <thead>
         <tr>  
           <th width="30px" class="center">No</th>
-          <th width="150px">No. Objek Pajak</th>
+          <th width="180px">No. Objek Pajak</th>
           <th>Nama Usaha</th>
           <th>Izin Usaha</th>
           <th width="100px">Jenis Usaha</th>

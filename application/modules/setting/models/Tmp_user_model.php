@@ -16,6 +16,8 @@ class Tmp_user_model extends CI_Model {
 	}
 
 	private function _main_query(){
+		$this->db->select("CASE WHEN user_level = 1 THEN 'Petugas Pajak' WHEN user_level = 2 THEN 'Wajib Pajak' END AS level ");
+		$this->db->select('qrcode_user.status as status_user');
 		$this->db->select($this->select);
 		$this->db->from($this->table);
 		$this->db->join('wajibpajak', 'wajibpajak.noktp=qrcode_user.noktp','left');
@@ -100,7 +102,7 @@ class Tmp_user_model extends CI_Model {
 	{
 		$get_data = $this->get_by_id($id);
 		$this->db->where_in(''.$this->table.'.id', $id);
-		return $this->db->update($this->table, array('is_deleted' => 'Y'));
+		return $this->db->update($this->table, array('is_deleted' => 'Y', 'status' => 'nonaktif'));
 	}
 
 

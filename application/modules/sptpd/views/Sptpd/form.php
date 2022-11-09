@@ -17,13 +17,14 @@
     <div class="col-sm-12">
         <form class="form-horizontal" method="post" id="form-default" action="" enctype="multipart/form-data" autocomplete="off">
 
-            <!-- hidden -->
-            <input type="hidden" name="namawajibpajak" value="<?php echo $profil_wp->nama?>">
-            <input type="hidden" name="namausahaop" id="namausahaop" value="">
+            
 
             <?php if($objek_pajak->num_rows() > 0) :?>
                 <p style="font-weight: bold">CARI OBJEK PAJAK ATAU JENIS USAHA</p>
 
+                <!-- hidden -->
+                <input type="hidden" name="namawajibpajak" value="<?php echo $profil_wp->nama?>">
+                <input type="hiddenxx" name="nama_usaha_op" id="nama_usaha_op" value="">
                 <div>
                     <label for="form-field-mask-1">
                         Pilih Objek Pajak atau Usaha Anda :
@@ -206,8 +207,9 @@
 
                     if(response.is_verified == 1){
                         // show hidden form
+                        console.log(response.nama_usaha);
                         $('#main_form').show();
-                        $('#namausahaop').val(response.nama_usaha);
+                        $('#nama_usaha_op').val(response.nama_usaha);
                         $('#npwpd').val(response.npwpd);
                         $('#nopd').val(response.nopd);   
                         // change jenis usaha

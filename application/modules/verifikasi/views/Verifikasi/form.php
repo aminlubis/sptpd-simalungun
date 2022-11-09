@@ -98,9 +98,10 @@ $(document).ready(function(){
 
                 <input name="id" id="id" value="<?php echo isset($value)?$value->id_izin_usaha:0?>" class="form-control" type="hidden" >
                 <input name="npwpd" id="npwpd" value="<?php echo isset($value)?$value->npwpd:0?>" class="form-control" type="hidden" >
+                <input name="kodejenispajak" id="kodejenispajak" value="<?php echo isset($value)?$value->kodejenispajak:0?>" class="form-control" type="hidden" >
+                <input name="kode_kelurahan" id="kode_kelurahan" value="<?php echo isset($value)?$value->kode_kelurahan:0?>" class="form-control" type="hidden" >
 
-                <?php if(isset($value) AND $value->wp_verified == 0) :?>
-                  <p><b>BIODATA WAJIB PAJAK</b> <?php echo ($value->wp_verified == 1)?'<span><i class="fa fa-check-circle-o green"></i> Terverifikasi </span>':'[ <span style="color: red; font-weight: bold"><i class="fa fa-exclamation red"></i> Belum diverifikasi </span> ]'; ?> </p>
+                  <p><b>BIODATA WAJIB PAJAK</b> <?php echo ($value->wp_verified == 1)?'<span style="color: green; font-weight: bold"><i class="fa fa-check-circle-o green"></i> Terverifikasi </span>':'[ <span style="color: red; font-weight: bold"><i class="fa fa-exclamation red"></i> Belum diverifikasi </span> ]'; ?> </p>
                   <div class="row">
                     <div class="col-md-8">
                       <div class="form-group">
@@ -169,10 +170,10 @@ $(document).ready(function(){
                       <div style="padding-top: 10px">
                         <label style="font-weight: bold">Verifikasi Data : </label>
                         <div class="col-md-12 no-padding" >
-                          <select class="form-control">
+                          <select class="form-control" name="verifikasi_data">
                             <option>-Pilih-</option>
-                            <option>Data Lengkap</option>
-                            <option>Data Belum Lengkap</option>
+                            <option value="1" <?php echo ($value->wp_verified == 1)?'selected':''?>>Data Lengkap</option>
+                            <option value="0" <?php echo ($value->wp_verified == 0)?'selected':''?>>Data Belum Lengkap</option>
                           </select>
                         </div>
                       </div>
@@ -181,10 +182,9 @@ $(document).ready(function(){
                     </div>
                   </div>
                   
-                <?php endif; ?>
                 
                 <br>
-                <p style="font-weight: bold">OBJEK PAJAK <?php echo ($value->is_verified == 1)?'<span><i class="fa fa-check-circle-o green"></i> Terverifikasi </span>':'[ <span style="color: red; font-weight: bold"><i class="fa fa-exclamation red"></i> Belum diverifikasi </span> ]'; ?></p>
+                <p style="font-weight: bold">OBJEK PAJAK <?php echo ($value->is_verified == 1)?'<span style="color: green; font-weight: bold"><i class="fa fa-check"></i> Terverifikasi </span>':'[ <span style="color: red; font-weight: bold"><i class="fa fa-exclamation red"></i> Belum diverifikasi </span> ]'; ?></p>
                 <div class="row">
                   <div class="col-md-8">
 
@@ -268,10 +268,10 @@ $(document).ready(function(){
                       <div style="padding-top: 10px">
                         <label style="font-weight: bold">Verifikasi Dokumen : </label>
                         <div class="col-md-12 no-padding" >
-                          <select class="form-control">
+                          <select class="form-control" name="verifikasi_dokumen">
                             <option>-Pilih-</option>
-                            <option>Dokumen Lengkap</option>
-                            <option>Dokumen Belum Lengkap</option>
+                            <option value="1" <?php echo ($value->is_verified == 1)?'selected':''?>>Dokumen Lengkap</option>
+                            <option value="0" <?php echo ($value->is_verified == 0)?'selected':''?>>Dokumen Belum Lengkap</option>
                           </select>
                         </div>
                       </div>

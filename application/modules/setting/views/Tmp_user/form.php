@@ -59,28 +59,23 @@ $(document).ready(function(){
                 <div class="form-group">
                   <label class="control-label col-md-2">ID</label>
                   <div class="col-md-1">
-                    <input name="id" id="id" value="<?php echo isset($value)?$value->user_id:0?>" placeholder="Auto" class="form-control" type="text" readonly>
+                    <input name="id" id="id" value="<?php echo isset($value)?$value->id:0?>" placeholder="Auto" class="form-control" type="text" readonly>
                   </div>
-                  
                 </div>
                 <div class="form-group">
-                  <label class="control-label col-md-2">Fullname</label>
+                  <label class="control-label col-md-2">Nama Lengkap</label>
                   <div class="col-md-2">
                     <input name="fullname" id="fullname" value="<?php echo isset($value)?$value->fullname:''?>" placeholder="" class="form-control" type="text" <?php echo ($flag=='read')?'readonly':''?> >
                   </div>
                 </div>
+
                 <div class="form-group">
                   <label class="control-label col-md-2">Email</label>
-                  <div class="col-md-2">
-                    <input name="email" id="email" value="<?php echo isset($value)?$value->email:''?>" placeholder="" class="form-control" type="text" <?php echo ($flag=='read')?'readonly':''?> >
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="control-label col-md-2">Username</label>
                   <div class="col-md-2">
                     <input name="username" id="username" value="<?php echo isset($value)?$value->username:''?>" placeholder="" class="form-control" type="text" <?php echo ($flag=='read')?'readonly':''?> >
                   </div>
                 </div>
+
                 <div class="form-group">
                   <label class="control-label col-md-2">Password</label>
                   <div class="col-md-2">
@@ -94,22 +89,15 @@ $(document).ready(function(){
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="control-label col-md-2">PIC</label>
-                  <div class="col-md-2">
-                    <?php echo $this->master->custom_selection(array('table'=>'global_parameter', 'where'=>array('is_active'=>'Y', 'flag' => 'pic'), 'id'=>'value', 'name' => 'label'),isset($value)?$value->pic_id:'','pic_id','pic_id','chosen-slect form-control',($flag=='read')?'readonly':'','');?>
-                  </div>
-                </div>
-
-                <div class="form-group">
                   <label class="control-label col-md-2">Is active?</label>
                   <div class="col-md-2">
                     <div class="radio">
                           <label>
-                            <input name="is_active" type="radio" class="ace" value="Y" <?php echo isset($value) ? ($value->is_active == 'Y') ? 'checked="checked"' : '' : 'checked="checked"'; ?> <?php echo ($flag=='read')?'readonly':''?> />
+                            <input name="status" type="radio" class="ace" value="aktif" <?php echo isset($value) ? ($value->status_user == 'aktif') ? 'checked="checked"' : '' : 'checked="checked"'; ?> <?php echo ($flag=='read')?'readonly':''?> />
                             <span class="lbl"> Ya</span>
                           </label>
                           <label>
-                            <input name="is_active" type="radio" class="ace" value="N" <?php echo isset($value) ? ($value->is_active == 'N') ? 'checked="checked"' : '' : ''; ?> <?php echo ($flag=='read')?'readonly':''?>/>
+                            <input name="status" type="radio" class="ace" value="" <?php echo isset($value) ? ($value->status_user == 'nonaktif') ? 'checked="checked"' : '' : ''; ?> <?php echo ($flag=='read')?'readonly':''?>/>
                             <span class="lbl">Tidak</span>
                           </label>
                     </div>
@@ -122,7 +110,7 @@ $(document).ready(function(){
                 <div class="form-actions center">
 
                   <!--hidden field-->
-                  <!-- <input type="text" name="id" value="<?php echo isset($value)?$value->user_id:0?>"> -->
+                  <!-- <input type="text" name="id" value="<?php echo isset($value)?$value->id:0?>"> -->
 
                   <a onclick="getMenu('setting/Tmp_user')" href="#" class="btn btn-sm btn-success">
                     <i class="ace-icon fa fa-arrow-left icon-on-right bigger-110"></i>

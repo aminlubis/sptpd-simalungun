@@ -146,6 +146,7 @@ class Register extends MX_Controller {
                 $newId = $this->db->insert_id();
                 // create account
                 $account = array(
+                    'fullname' => $this->regex->_genRegex($val->set_value('nama'),'RGXQSL'),
                     'username' => $this->regex->_genRegex($val->set_value('username'),'RGXQSL'),
                     'noktp' => $this->regex->_genRegex($val->set_value('no_ktp'),'RGXQSL'),
                     'password' => $this->bcrypt->hash_password($val->set_value('password')),

@@ -86,7 +86,7 @@ class Objek_pajak extends MX_Controller {
             $no++;
             $row = array();
             $row[] = '<div class="center">'.$no.'</div>';
-            $txt_nopd = (empty($row_list->no_pd))?'<span style="font-weight: bold; color: red; font-style: italic">Belum diverifikasi</span>':$row_list->nopd;
+            $txt_nopd = (empty($row_list->nopd))?'<span style="font-weight: bold; color: red; font-style: italic">Belum diverifikasi</span>':'<b>'.$row_list->nopd.'</b>';
             $row[] = '<div class="center">'.$txt_nopd.'</div>';
             $row[] = strtoupper($row_list->nama_usaha).'<br>No. Telp : '.$row_list->telp;
             $row[] = $row_list->noizinusaha.'<br>'.$this->tanggal->formatDateFormDmy($row_list->tanggal_awal_usaha).' s/d '.$this->tanggal->formatDateFormDmy($row_list->tanggal_akhir_usaha);
@@ -95,7 +95,12 @@ class Objek_pajak extends MX_Controller {
             $row[] = $row_list->alamat_usaha.', '.$row_list->kodepos_usaha;
             $row[] = $row_list->nama_kecamatan;
             $row[] = $row_list->nama_kelurahan;
-            $row[] = '<div class="center"><a href="#" onclick="getMenu('."'objek_pajak/Objek_pajak/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-success"><i class="fa fa-edit"></i>Ubah</a><a href="#" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Hapus</a></div>';
+            if($row_list->is_verified == 1){
+                $row[] = '<div class="center"><a href="#" onclick="getMenu('."'objek_pajak/Objek_pajak/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-success"><i class="fa fa-edit"></i>Ubah</a></div>';
+            }else{
+                $row[] = '<div class="center"><a href="#" onclick="getMenu('."'objek_pajak/Objek_pajak/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-success"><i class="fa fa-edit"></i>Ubah</a><a href="#" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Hapus</a></div>';
+                
+            }
                    
             $data[] = $row;
         }
