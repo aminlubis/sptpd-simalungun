@@ -92,9 +92,10 @@ class Verifikasi extends MX_Controller {
             $row[] = $row_list->nama_kecamatan;
             $row[] = $row_list->nama_kelurahan;
             if($row_list->is_verified == 1){
-
+                $row[] = '<div class="center"><span><i class="fa fa-certificate orange bigger-150"></i> <br><span style="color: green; font-weight: bold">Verified</span></span></div>';
+            }else{
+                $row[] = '<div class="center"><a href="#" onclick="getMenu('."'verifikasi/Verifikasi/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-primary"><i class="fa fa-search"></i> Verifikasi Data</a></div>';
             }
-            $row[] = '<div class="center"><a href="#" onclick="getMenu('."'verifikasi/Verifikasi/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-primary"><i class="fa fa-search"></i> Verifikasi Data</a></div>';
                    
             $data[] = $row;
         }

@@ -221,7 +221,7 @@
 
             <?php endif; ?>
 
-            <?php if(in_array($this->session->userdata('user')->user_level, array(1, 2))) :?>
+            <?php if(in_array($this->session->userdata('user')->user_level, array(1))) :?>
             <li class="hover">
               <a href="#" onclick="getMenu('Verifikasi')" class="dropdown-toggle">
                 <i class="menu-icon fa fa-search"></i>
@@ -286,12 +286,15 @@
           <!-- /section:basics/content.breadcrumbs -->
           <div class="page-content">
             <div class="page-header">
+
+              <?php if($this->session->userdata('user')->user_level == 2) :?>
               <span>Nomor Wajib Pajak : <br><b><?php echo $profil_wp->npwpd?></b> | <i>registered at <?php echo $this->tanggal->formatDateFormDmy($profil_wp->tgldaftar)?></i></span><br>
               <span style="font-weight: bold; font-size: 16px"><?php echo $profil_wp->nama?> [ <?php echo $profil_wp->noktp?> ]</span>
               <!-- hidden -->
               <input type="hidden" name="namawajibpajak" value="<?php echo $profil_wp->nama?>">
-              <input type="hidden" name="namausahaop" id="namausahaop" value="">
-              
+              <?php else :?>
+                <span style="font-size: 16px; font-weight: bold"><?php echo $this->session->userdata('user')->fullname?></span> [Petugas Pajak]
+              <?php endif; ?>
             </div>
             
               <!-- PAGE CONTENT BEGINS -->
