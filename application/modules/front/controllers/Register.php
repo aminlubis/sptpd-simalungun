@@ -107,8 +107,6 @@ class Register extends MX_Controller {
         {                       
             $this->db->trans_begin();
             
-            
-
             $dataexc = array(
                 'tgldaftar' => $this->regex->_genRegex( $val->set_value('tgldaftar'), 'RGXQSL'),
                 'noktp' => $this->regex->_genRegex( $val->set_value('no_ktp'), 'RGXQSL'),
@@ -124,18 +122,6 @@ class Register extends MX_Controller {
                 'tglsistem' => date('Y-m-d H:i:s'),
             );
 
-            if(isset($_FILES['path_ktp']['name'])){
-                /*hapus dulu file yang lama*/
-                if( $id != 0 ){
-                    $profile = $this->Register->get_by_id($dataexc['noktp']);
-                    if ($profile->path_ktp != NULL) {
-                        unlink(PATH_FILE_DEFAULT.$profile->path_ktp.'');
-                    }
-                }
-                $dataexc['path_ktp'] = $this->upload_file->doUpload('path_ktp', PATH_FILE_DEFAULT);
-            }
-
-            
             if($id==0){
                 $urutan = $this->db->select('(max(no_urut)+1) as urutan')->from('wajibpajak')->get()->row();
                 $npwpd = sprintf("%04d-%03d",$urutan->urutan,$_POST['kelurahanHidden']);
@@ -143,7 +129,7 @@ class Register extends MX_Controller {
                 $dataexc['no_urut'] = $urutan->urutan;
 
                 $this->Register->save($dataexc);
-                $newId = $this->db->insert_id();
+                $newId = $npwpd;
                 // create account
                 $account = array(
                     'fullname' => $this->regex->_genRegex($val->set_value('nama'),'RGXQSL'),
@@ -160,6 +146,18 @@ class Register extends MX_Controller {
             }else{
                 $this->Register->update(array('npwpd' => $id), $dataexc);
                 $newId = $id;
+            }
+
+             // upload attachment
+             if(isset($_FILES['file']['name'])){
+                $config = array(
+                    'reftable' => 'wajib_pajak',
+                    'refid' => $newId,
+                    'jenis' => 'KTP',
+                    'npwpd' => $newId,
+                    'noktp' => $this->input->post('no_ktp'),
+                ); 
+                $this->upload_file->process_upload_blob($config);
             }
 
             if ($this->db->trans_status() === FALSE)
@@ -188,10 +186,6 @@ class Register extends MX_Controller {
             $this->db->where(array('username' => $params['email'], 'password' => $params['password']))->update('qrcode_user', array('mail_creating' => 1));
         }
 
-		
-		
-
-        
     }
 
     

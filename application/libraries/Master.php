@@ -167,6 +167,57 @@ final Class Master {
 		
     }
 
+	function custom_selection_with_info($custom=array(), $nid='',$name,$id,$class='',$required='',$inline='') {
+		
+		$CI =&get_instance();
+		$db = $CI->load->database('default', TRUE);
+		
+		if(isset($custom['where_in'])){
+			$db->where_in($custom['where_in']['col'],$custom['where_in']['val']);
+			$data = $db->get($custom['table'])->result_array();
+
+		}else if(isset($custom['where'])&&isset($custom['where_in'])){
+			$db->where_in($custom['where_in']['col'],$custom['where_in']['val']);
+			$db->where($custom['where']);
+			$data = $db->get($custom['table'])->result_array();
+		}else if(isset($custom['like'])&&isset($custom['where'])){
+			$db->like($custom['like']['col'],$custom['like']['val']);
+			$db->where($custom['where']);
+			$data = $db->get($custom['table'])->result_array();
+		}else{
+			$data = $db->where($custom['where'])->get($custom['table'])->result_array();
+		}
+
+		
+        //$data = $db->where($custom['where'])->get($custom['table'])->result_array();
+		
+		$selected = $nid?'':'selected';
+		$readonly = '';//$CI->session->userdata('nrole')=='approver'?'readonly':'';
+		
+		$starsign = $required?'*':'';
+		
+		$fieldset = $inline?'':'<fieldset>';
+		$fieldsetend = $inline?'':'</fieldset>';
+		
+		$field='';
+		$field.='
+		<select class="'.$class.'" name="'.$name.'" id="'.$id.'" '.$readonly.' '.$required.' >
+			<option value="" '.$selected.'> - Silahkan pilih - </option>';
+
+				foreach($data as $row){
+					$info = isset($custom['addinfo'])?$row[$custom['addinfo']]:'';
+					$sel = $nid==$row[$custom['id']]?'selected':'';
+					$field.='<option value="'.$row[$custom['id']].'" '.$sel.' >'.strtoupper($row[$custom['name']]).' ['.$info.']</option>';
+				}	
+			
+		$field.='
+		</select>
+		';
+		
+		return $field;
+		
+    }
+
     function custom_selection_with_db_selected($custom=array(), $nid='',$name,$id,$class='',$required='',$inline='', $load_db) {
 		
 		$CI =&get_instance();

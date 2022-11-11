@@ -4,8 +4,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Sptpd_model extends CI_Model {
 
 	var $table = 'history_objek_pajak';
-	var $column = array('history_objek_pajak.nama_usaha');
-	var $select = 'b.npwpd, history_objek_pajak.*';
+	var $column = array('b.nama_usaha');
+	var $select = 'b.npwpd, history_objek_pajak.*, b.nama_usaha';
 
 	var $order = array('history_objek_pajak.id_hop' => 'DESC');
 

@@ -211,7 +211,7 @@
                 <li class="hover">
                   <a href="#" onclick="getMenu('Sptpd')">
                     <i class="menu-icon fa fa-caret-right"></i>
-                    Riwayat Entri
+                    Riwayat Entri SPTPD
                   </a>
 
                   <b class="arrow"></b>
@@ -293,7 +293,8 @@
               <!-- hidden -->
               <input type="hidden" name="namawajibpajak" value="<?php echo $profil_wp->nama?>">
               <?php else :?>
-                <span style="font-size: 16px; font-weight: bold"><?php echo $this->session->userdata('user')->fullname?></span> [Petugas Pajak]
+                <span style="font-size: 16px; font-weight: bold"><?php echo $this->session->userdata('user')->fullname?></span> <br>[Petugas Pajak]
+                
               <?php endif; ?>
             </div>
             

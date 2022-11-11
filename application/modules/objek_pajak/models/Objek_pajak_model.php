@@ -5,7 +5,7 @@ class Objek_pajak_model extends CI_Model {
 
 	var $table = 'objek_pajak';
 	var $column = array('objek_pajak.nama_usaha');
-	var $select = 'objek_pajak.*, jenisusaha.jenisusaha, kode_kecamatan.nama_kecamatan, kode_kelurahan.nama_kelurahan';
+	var $select = 'objek_pajak.*, jenisusaha.jenisusaha, kode_kecamatan.nama_kecamatan, kode_kelurahan.nama_kelurahan, attc.*';
 
 	var $order = array('objek_pajak.id_izin_usaha' => 'DESC');
 
@@ -21,8 +21,8 @@ class Objek_pajak_model extends CI_Model {
 		$this->db->join('jenisusaha','jenisusaha.idjenisusaha=objek_pajak.idjenis_usaha','left');
 		$this->db->join('kode_kecamatan','kode_kecamatan.kode_kecamatan=objek_pajak.kecamatan_usaha','left');
 		$this->db->join('kode_kelurahan','kode_kelurahan.kode_kelurahan=objek_pajak.kode_kelurahan','left');
+		$this->db->join("(SELECT * FROM t_fileattachment WHERE reftable='objek_pajak') as attc","(attc.refid=objek_pajak.nopd)",'left');
 		$this->db->where("objek_pajak.npwpd IN (SELECT npwpd FROM wajibpajak WHERE noktp='".$this->session->userdata('user')->noktp."')");
-		
 
 	}
 
@@ -58,6 +58,7 @@ class Objek_pajak_model extends CI_Model {
 		if($_POST['length'] != -1)
 		$this->db->limit($_POST['length'], $_POST['start']);
 		$query = $this->db->get();
+		// print_r($this->db->last_query());exit;
 		return $query->result();
 	}
 
@@ -105,7 +106,22 @@ class Objek_pajak_model extends CI_Model {
 	{
 		$get_data = $this->get_by_id($id);
 		$this->db->where_in(''.$this->table.'.id_izin_usaha', $id);
-		return $this->db->update($this->table, array('is_deleted' => 'Y', 'is_active' => 'N'));
+		return $this->db->delete($this->table);
+	}
+
+	public function getNopd($params){
+		// max num
+		$max_num = $this->db->get_where('objek_pajak', array('npwpd' => $params['npwpd']))->num_rows();
+		$strlen = strlen($max_num);
+
+		$setnul = '';
+		for ($i=0; $i < (4-$strlen); $i++) { 
+			$setnul .= '0';
+		}
+
+		$nopd = $params['npwpd'].'-0'.$params['kodejenispajak'].'-'.$params['kode_kelurahan'].'-'.$setnul.$max_num;
+
+		return $nopd;
 	}
 
 

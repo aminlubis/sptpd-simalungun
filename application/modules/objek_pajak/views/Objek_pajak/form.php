@@ -97,6 +97,7 @@ $(document).ready(function(){
                 <br>
 
                 <input name="npwpd" id="npwpd" value="<?php echo isset($profil_wp)?$profil_wp->npwpd:0?>" class="form-control" type="hidden" >
+                <input name="noktp" id="noktp" value="<?php echo isset($profil_wp)?$profil_wp->noktp:0?>" class="form-control" type="hidden" >
                 <input name="id" id="id" value="<?php echo isset($value)?$value->id_izin_usaha:0?>" class="form-control" type="hidden" >
 
                 <p style="font-weight: bold">PILIH JENIS PAJAK & JENIS USAHA</p>
@@ -148,12 +149,12 @@ $(document).ready(function(){
                 <div class="form-group">
                   <label class="control-label col-md-2">Upload Dokumen Perizinan</label>
                   <div class="col-md-2" style="padding-left: 18px">
-                    <input name="path_file_izin" id="path_file_izin" value="" class="form-control" type="file" >
+                    <input name="file" id="file" value="" class="form-control" type="file" >
                   </div>
-                  <?php if(isset($value) AND $value->path_file_izin != NULL) :?>
-                  <div class="col-md-2" style="padding-top: 5px">
-                    <a href="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_file_izin?>" target="_blank"><i class="fa fa-download"></i> <i>Download Lampiran</i></a>
-                  </div>
+                  <?php if(isset($value) AND $value->file_attachment != NULL) : ?>
+                      <div class="col-md-2" style="padding-top: 3px">
+                          <i><a href="<?php echo base_url().'Templates/Attachment/download?refno='.$value->nopd.'&refname=objek_pajak'?>" target="_blank"><i class="fa fa-download"></i> Download Lampiran</a></i>
+                      </div>
                   <?php endif; ?>
                 </div>
 

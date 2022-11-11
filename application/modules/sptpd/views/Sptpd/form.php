@@ -24,6 +24,7 @@
 
                 <!-- hidden -->
                 <input type="hidden" name="namawajibpajak" value="<?php echo $profil_wp->nama?>">
+                <input type="hidden" name="noktp" value="<?php echo $profil_wp->noktp?>">
                 <input type="hidden" name="nama_usaha_op" id="nama_usaha_op" value="">
                 <div>
                     <label for="form-field-mask-1">
@@ -31,7 +32,7 @@
                     </label>
 
                     <div class="input-group col-md-12">
-                        <?php echo $this->master->custom_selection(array('table'=>'objek_pajak', 'where'=>array('npwpd' => $profil_wp->npwpd), 'id'=>'id_izin_usaha', 'name' => 'nama_usaha'),'','jenisusaha','jenisusaha','form-control','','');?>
+                        <?php echo $this->master->custom_selection_with_info(array('table'=>'view_objek_pajak', 'where'=>array('npwpd' => $profil_wp->npwpd), 'id'=>'id_izin_usaha', 'name' => 'nama_usaha', 'addinfo' => 'jenispajak'),'','jenisusaha','jenisusaha','form-control','','');?>
                     </div>
                 </div>
 
@@ -177,7 +178,7 @@
                 
                 if(jsonResponse.status === 200){
                 $.achtung({message: jsonResponse.message, timeout:5});
-                $('#page-area-content').html('<div class="alert alert-success"><strong style="font-size: 14px"><i class="fa fa-check-circle green"></i> Sukses</strong><br> Terima kasih anda telah melakukan Input Data e-SPTPD Online, data anda akan segera diproses oleh petugas kami.</div>');
+                $('#page-area-content').load('sptpd/Sptpd');
                 }else{
                 $.achtung({message: jsonResponse.message, timeout:5, className: 'achtungFail'});
                 $('#page-area-content').html('<div class="alert alert-danger"><strong><i class="fa fa-times-circle red"></i> Gagal !</strong><br>Maaf, proses Input Data e-SPTPD anda gagal dilakukan, silahkan coba beberapa saat lagi.</div>');

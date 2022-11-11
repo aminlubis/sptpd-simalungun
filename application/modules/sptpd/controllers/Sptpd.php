@@ -62,13 +62,15 @@ class Sptpd extends MX_Controller {
             $no++;
             $row = array();
             $row[] = '<div class="center">'.$no.'</div>'; 
+            $row[] = '<div class="center">'.$row_list->id_hop.'</div>';
             $row[] = '<div class="center">'.$row_list->noobjekpajak.'</div>';
             $row[] = strtoupper($row_list->nama_usahaop);
             $row[] = $row_list->periode_awal;
             $row[] = $row_list->periode_akhir;
-            $row[] = $row_list->va_bayar;
+            // $row[] = $row_list->va_bayar;
             $row[] = '<div style="text-align: right">'.number_format($row_list->omset).'</div>';
             $row[] = '<div style="text-align: right">'.number_format($row_list->pajakterutang).'</div>';
+            $row[] = '<div style="text-align: center"><a href="'.base_url().'Templates/Attachment/download?refno='.$row_list->id_hop.'&refname=history_objek_pajak" target="_blank">Download File</a></div>';
                    
             $data[] = $row;
         }
@@ -83,7 +85,7 @@ class Sptpd extends MX_Controller {
         echo json_encode($output);
     }
 
-
+    // pajak hotel
     public function process_1()
     {
         
@@ -143,6 +145,19 @@ class Sptpd extends MX_Controller {
 
             $this->db->insert('sptpdhotel', $dataexc);
 
+
+             // upload attachment
+             if(isset($_FILES['file']['name'])){
+                $config = array(
+                    'reftable' => 'history_objek_pajak',
+                    'refid' => $nosptpd,
+                    'jenis' => 'SPTPD',
+                    'npwpd' => $this->input->post('npwpd'),
+                    'noktp' => $this->input->post('noktp'),
+                ); 
+                $this->upload_file->process_upload_blob($config);
+            }
+
             if ($this->db->trans_status() === FALSE)
             {
                 $this->db->trans_rollback();
@@ -156,6 +171,117 @@ class Sptpd extends MX_Controller {
             }
         }
     }
+
+    // pajak restoran
+    public function process_2()
+    {
+        
+        $this->load->library('form_validation');
+        $val = $this->form_validation;
+        
+        $val->set_rules('bayarmakanan', 'Makanan', 'trim|numeric');
+        $val->set_rules('bayarminum', 'Minuman', 'trim|numeric');
+        $val->set_rules('byrmakanminum', 'Makanan & Minuman', 'trim|numeric');
+        $val->set_rules('byrnasikotak', 'Nasi Kotak', 'trim|numeric');
+        $val->set_rules('byrpelayanan', 'Pelayanan', 'trim|numeric');
+        $val->set_rules('byrlainnya', 'Pembayaran Lainnya', 'trim|numeric');
+        $val->set_rules('ttlomset', 'Total Omset', 'trim|numeric');
+        // default
+        $val->set_rules('dpp', 'DPP', 'trim|required|numeric');
+        $val->set_rules('pajakterutang', 'Pajak Terhutang', 'trim|required|numeric');
+
+        $val->set_message('required', "Silahkan isi field \"%s\"");
+
+        if ($val->run() == FALSE)
+        {
+            $val->set_error_delimiters('<div style="color:white">', '</div>');
+            echo json_encode(array('status' => 301, 'message' => validation_errors()));
+        }
+        else
+        {                       
+            $this->db->trans_begin();
+            $id = ($this->input->post('id'))?$this->input->post('id'):0;
+            // print_r($_FILES);die;
+
+            // history objek pajak
+            $hop = array(
+                'noobjekpajak' => $this->regex->_genRegex( $_POST['nopd'] , 'RGXQSL'),
+                'nama_wajibpajak' => $this->regex->_genRegex( $_POST['namawajibpajak'] , 'RGXQSL'),
+                'nama_usahaop' => $this->regex->_genRegex( $_POST['nama_usaha_op'] , 'RGXQSL'),
+                'periode_awal' => $this->regex->_genRegex( $_POST['periodeawal'] , 'RGXQSL'),
+                'periode_akhir' => $this->regex->_genRegex( $_POST['periodeakhir'] , 'RGXQSL'),
+                'pajakterutang' => $this->regex->_genRegex( $val->set_value('pajakterutang') , 'RGXINT'),
+                'waktu_sptpd' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
+                'penetapan_pajak_official' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
+                'omset' => $this->regex->_genRegex( $val->set_value('ttlomset') , 'RGXINT'),
+            );
+            $this->db->insert('history_objek_pajak', $hop);
+            $id_hop = $this->db->insert_id();
+
+            $nosptpd = $id_hop;
+
+            $dataexc = array(
+                'nosptpd' => $this->regex->_genRegex( $nosptpd , 'RGXINT'),
+                'tglsetor' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
+                // sptpd restoran
+                'bayarmakanan' => $this->regex->_genRegex( $val->set_value('bayarmakanan'), 'RGXQSL' ),
+                'bayarminum' => $this->regex->_genRegex( $val->set_value('bayarminum'), 'RGXQSL' ),
+                'byrmakanminum' => $this->regex->_genRegex( $val->set_value('byrmakanminum'), 'RGXQSL' ),
+                'byrnasikotak' => $this->regex->_genRegex( $val->set_value('byrnasikotak'), 'RGXQSL' ),
+                'byrpelayanan' => $this->regex->_genRegex( $val->set_value('byrpelayanan'), 'RGXQSL' ),
+                'byrlainnya' => $this->regex->_genRegex( $val->set_value('byrlainnya'), 'RGXQSL' ),
+                'totalbayar' => $this->regex->_genRegex( $val->set_value('ttlomset'), 'RGXQSL' ),
+                'dpp' => $this->regex->_genRegex( $val->set_value('dpp'), 'RGXQSL' ),
+                'pajakterutang' => $this->regex->_genRegex( $val->set_value('pajakterutang'), 'RGXQSL' ),
+                // default
+                'dpp' => $this->regex->_genRegex( $val->set_value('dpp') , 'RGXINT'),
+                'trfpajak' => $this->regex->_genRegex( $val->set_value('trfpajak') , 'RGXINT'),
+                'pajakterutang' => $this->regex->_genRegex( $val->set_value('pajakterutang') , 'RGXINT'),
+                'tglsistem' => $this->regex->_genRegex( date('Y-m-d H:i:s') , 'RGXQSL'),
+                'id_hop' => $this->regex->_genRegex( $nosptpd , 'RGXINT'),
+            );
+
+            $this->db->insert('sptpdrestoran', $dataexc);
+
+            // upload attachment
+            if(isset($_FILES['file']['name'])){
+                $config = array(
+                    'reftable' => 'history_objek_pajak',
+                    'refid' => $nosptpd,
+                    'jenis' => 'SPTPD',
+                    'npwpd' => $this->input->post('npwpd'),
+                    'noktp' => $this->input->post('noktp'),
+                ); 
+                $this->upload_file->process_upload_blob($config);
+            }
+
+
+            if ($this->db->trans_status() === FALSE)
+            {
+                $this->db->trans_rollback();
+                echo json_encode(array('status' => 301, 'message' => 'Maaf Proses Gagal Dilakukan'));
+            }
+            else
+            {
+
+                $this->db->trans_commit();
+                echo json_encode(array('status' => 200, 'message' => 'Proses Berhasil Dilakukan'));
+            }
+        }
+    }
+
+    public function download_file($id_hop){
+        $file = $this->db->get_where('t_fileattachment', array('refid' => $_GET['refno'], 'reftable' => $_GET['refname']))->row();
+        if(!empty($file)){
+            $data['value'] = $file;
+            $this->load->view('sptpd/Sptpd/download_view', $data);
+        }else{
+            echo 'Tidak ada file ditemukan';
+        }
+    }
+
+
+    
 
     
 

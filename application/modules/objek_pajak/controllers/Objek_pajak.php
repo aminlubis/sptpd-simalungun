@@ -86,7 +86,7 @@ class Objek_pajak extends MX_Controller {
             $no++;
             $row = array();
             $row[] = '<div class="center">'.$no.'</div>';
-            $txt_nopd = (empty($row_list->nopd))?'<span style="font-weight: bold; color: red; font-style: italic">Belum diverifikasi</span>':'<b>'.$row_list->nopd.'</b>';
+            $txt_nopd = ($row_list->is_verified != 1)?'<span style="font-weight: bold; color: red; font-style: italic">Belum diverifikasi</span>':'<b>'.$row_list->nopd.'</b>';
             $row[] = '<div class="center">'.$txt_nopd.'</div>';
             $row[] = strtoupper($row_list->nama_usaha).'<br>No. Telp : '.$row_list->telp;
             $row[] = $row_list->noizinusaha.'<br>'.$this->tanggal->formatDateFormDmy($row_list->tanggal_awal_usaha).' s/d '.$this->tanggal->formatDateFormDmy($row_list->tanggal_akhir_usaha);
@@ -98,7 +98,7 @@ class Objek_pajak extends MX_Controller {
             if($row_list->is_verified == 1){
                 $row[] = '<div class="center"><a href="#" onclick="getMenu('."'objek_pajak/Objek_pajak/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-success"><i class="fa fa-edit"></i>Ubah</a></div>';
             }else{
-                $row[] = '<div class="center"><a href="#" onclick="getMenu('."'objek_pajak/Objek_pajak/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-success"><i class="fa fa-edit"></i>Ubah</a><a href="#" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Hapus</a></div>';
+                $row[] = '<div class="center"><a href="#" onclick="getMenu('."'objek_pajak/Objek_pajak/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-success"><i class="fa fa-edit"></i>Ubah</a><a href="#" class="btn btn-xs btn-danger" onclick="delete_data('.$row_list->id_izin_usaha.')"><i class="fa fa-trash"></i> Hapus</a></div>';
                 
             }
                    
@@ -144,13 +144,23 @@ class Objek_pajak extends MX_Controller {
             $this->db->trans_begin();
             $id = ($this->input->post('id'))?$this->regex->_genRegex($this->input->post('id'),'RGXINT'):0;
 
+            // generate NOPD
+            $config = array(
+                'npwpd' => $_POST['npwpd'],
+                'kodejenispajak' => $_POST['jenispajak'],
+                'kode_kelurahan' => $_POST['kelurahanHidden'],
+            );
+            $format_nopd = $this->Objek_pajak->getNopd($config);
+
             $dataexc = array(
+                'nopd' => $this->regex->_genRegex($format_nopd, 'RGXQSL'),
                 'npwpd' => $this->regex->_genRegex($_POST['npwpd'], 'RGXQSL'),
                 'kodejenispajak' => $this->regex->_genRegex($val->set_value('jenispajak'), 'RGXQSL'),
                 'idjenis_usaha' => $this->regex->_genRegex($val->set_value('jenisusaha'), 'RGXQSL'),
                 'noizinusaha' => $this->regex->_genRegex($val->set_value('noizinusaha'), 'RGXQSL'),
                 'tanggal_awal_usaha' => $this->regex->_genRegex($val->set_value('tanggal_awal_usaha'), 'RGXQSL'),
                 'tanggal_akhir_usaha' => $this->regex->_genRegex($val->set_value('tanggal_akhir_usaha'), 'RGXQSL'),
+                'tanggal_daftar' => $this->regex->_genRegex(date('Y-m-d'), 'RGXQSL'),
                 'nama_usaha' => $this->regex->_genRegex($val->set_value('nama_usaha'), 'RGXQSL'),
                 'alamat_usaha' => $this->regex->_genRegex($val->set_value('alamat_usaha'), 'RGXQSL'),
                 'kecamatan_usaha' => $this->regex->_genRegex($val->set_value('kecamatanHidden'), 'RGXQSL'),
@@ -159,15 +169,27 @@ class Objek_pajak extends MX_Controller {
                 'telp' => $this->regex->_genRegex($val->set_value('telp'), 'RGXQSL')
             );
 
-            if(isset($_FILES['path_file_izin']['name'])){
-                /*hapus dulu file yang lama*/
-                if( $id != 0 ){
-                    $obj = $this->Objek_pajak->get_by_id($id);
-                    if ($obj->path_file_izin != NULL) {
-                        unlink(PATH_FILE_DEFAULT.$obj->path_file_izin.'');
-                    }
-                }
-                $dataexc['path_file_izin'] = $this->upload_file->doUpload('path_file_izin', PATH_FILE_DEFAULT);
+            // if(isset($_FILES['path_file_izin']['name'])){
+            //     /*hapus dulu file yang lama*/
+            //     if( $id != 0 ){
+            //         $obj = $this->Objek_pajak->get_by_id($id);
+            //         if ($obj->path_file_izin != NULL) {
+            //             unlink(PATH_FILE_DEFAULT.$obj->path_file_izin.'');
+            //         }
+            //     }
+            //     $dataexc['path_file_izin'] = $this->upload_file->doUpload('path_file_izin', PATH_FILE_DEFAULT);
+            // }
+
+            // upload attachment
+            if(isset($_FILES['file']['name'])){
+                $config = array(
+                    'reftable' => 'objek_pajak',
+                    'refid' => $format_nopd,
+                    'jenis' => 'IZIN',
+                    'npwpd' => $this->input->post('npwpd'),
+                    'noktp' => $this->input->post('noktp'),
+                ); 
+                $this->upload_file->process_upload_blob($config);
             }
 
             
@@ -196,7 +218,6 @@ class Objek_pajak extends MX_Controller {
         $toArray = explode(',',$id);
         if($id!=null){
             if($this->Objek_pajak->delete_by_id($toArray)){
-                $this->logs->save('Objek_pajak', $id, 'delete record', '', 'level_id');
                 echo json_encode(array('status' => 200, 'message' => 'Proses Hapus Data Berhasil Dilakukan'));
 
             }else{

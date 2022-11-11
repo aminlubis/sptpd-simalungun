@@ -82,8 +82,9 @@ class Verifikasi extends MX_Controller {
             $no++;
             $row = array();
             $row[] = '<div class="center">'.$no.'</div>';
-            $txt_nopd = (empty($row_list->nopd))?'<span style="font-weight: bold; color: red; font-style: italic">Belum diverifikasi</span>':'<b>'.$row_list->nopd.'</b>';
+            $txt_nopd = ($row_list->is_verified != 1)?'<span style="font-weight: bold; color: red; font-style: italic">Belum diverifikasi</span>':'<b>'.$row_list->nopd.'</b>';
             $row[] = '<div class="center">'.$txt_nopd.'</div>';
+            $row[] = '<div class="center">'.$row_list->jenispajak.'</div>';
             $row[] = strtoupper($row_list->nama_usaha).'<br>No. Telp : '.$row_list->telp;
             $row[] = $row_list->noizinusaha.'<br>'.$this->tanggal->formatDateFormDmy($row_list->tanggal_awal_usaha).' s/d '.$this->tanggal->formatDateFormDmy($row_list->tanggal_akhir_usaha);
             $row[] = $row_list->jenisusaha;
@@ -92,7 +93,7 @@ class Verifikasi extends MX_Controller {
             $row[] = $row_list->nama_kecamatan;
             $row[] = $row_list->nama_kelurahan;
             if($row_list->is_verified == 1){
-                $row[] = '<div class="center"><span><i class="fa fa-certificate orange bigger-150"></i> <br><span style="color: green; font-weight: bold">Verified</span></span></div>';
+                $row[] = '<div class="center"><a href="#" onclick="getMenu('."'verifikasi/Verifikasi/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-warning" style="color: black !important"><i class="fa fa-refresh"></i> Verifikasi Ulang</a></div>';
             }else{
                 $row[] = '<div class="center"><a href="#" onclick="getMenu('."'verifikasi/Verifikasi/form/".$row_list->id_izin_usaha."'".')" class="btn btn-xs btn-primary"><i class="fa fa-search"></i> Verifikasi Data</a></div>';
             }
@@ -134,12 +135,7 @@ class Verifikasi extends MX_Controller {
                 'is_verified' => $this->regex->_genRegex($val->set_value('verifikasi_data'), 'RGXINT'),
             );
 
-            // generate NOPD
-            $format_nopd = $this->Verifikasi->getNopd();
-            
-
             $verifikasi_dokumen = array(
-                'nopd' => $this->regex->_genRegex($format_nopd, 'RGXQSL'),
                 'is_verified' => $this->regex->_genRegex($val->set_value('verifikasi_dokumen'), 'RGXINT'),
             );
 

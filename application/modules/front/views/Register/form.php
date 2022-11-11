@@ -95,19 +95,15 @@
         <div class="form-group">
             <label class="control-label col-md-1">Upload file</label>  
             <div class="col-md-2">
-                <input id="path_ktp" class="form-control" name="path_ktp" type="file" />
+                <input id="file" class="form-control" name="file" type="file" />
             </div>
+            <?php if(isset($value) AND $value->file_attachment != NULL) : ?>
+                <div class="col-md-2" style="padding-top: 3px">
+                    <i><a href="<?php echo base_url().'Templates/Attachment/download?refno='.$value->npwpd.'&refname=wajibpajak'?>" target="_blank"><i class="fa fa-download"></i> Download Lampiran</a></i>
+                </div>
+            <?php endif; ?>
         </div>
-        <?php if(isset($value) AND $value->path_ktp != NULL) : ?>
-        <div class="form-group">
-            <label class="col-md-1">&nbsp;</label>  
-            <div class="col-md-2">
-                <br>
-                <i>Lampiran file :</i><br><br>
-                <a href="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" target="_blank"><img src="<?php echo base_url().PATH_FILE_DEFAULT.$value->path_ktp?>" width="250px"></a>
-            </div>
-        </div>
-        <?php endif; ?>
+        
         
         <?php if($this->session->userdata('logged') == false) :?>
         <br>

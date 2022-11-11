@@ -233,7 +233,7 @@ final Class upload_file
         $CI =& get_instance();
         $db = $CI->load->database('default', TRUE);
 
-        $files = $this->getUploadedFile($params, 'data');
+        $files = $CI->getUploadedFile($params, 'data');
         /*if exist file*/
         if (count($files) > 0) {
             foreach ($files as $key => $value) {
@@ -247,5 +247,43 @@ final Class upload_file
         return true;
 
     }
+
+    function process_upload_blob($params)
+	{
+
+        $CI =& get_instance();
+        $db = $CI->load->database('default', TRUE);
+
+        $config = array();
+		$config['upload_path']          = './uploaded/files/';
+		$config['allowed_types']        = 'gif|jpg|png|pdf|xls|xlsx|jpeg';
+		$config['max_size']             = 1000;
+		$CI->load->library('upload', $config);
+		if ( ! $CI->upload->do_upload('file'))
+		{
+				$error = array('error' => $CI->upload->display_errors());
+                print_r($error); exit;
+		}
+		else
+		{
+			$image_data = $CI->upload->data();
+			$imgdata = file_get_contents($image_data['full_path']);
+			// $file_encode=base64_encode($imgdata);
+			$data['refid'] = $params['refid'];
+			$data['reftable'] = $params['reftable'];
+			$data['jenis'] = $params['jenis'];
+			$data['tipe'] = $CI->upload->data('file_type');
+			$data['ukuran'] = $CI->upload->data('file_size');
+			$data['file_attachment'] = $imgdata;
+			$data['nama_file'] =  $CI->upload->data('file_name');
+			$data['npwpd'] =  $params['npwpd'];
+			$data['noktp'] =  $params['noktp'];
+			$data['dtmCreated'] = date('Y-m-d H:i:s');
+			$db->insert('t_fileattachment',$data);
+			unlink($image_data['full_path']);
+			return true;
+		}
+	}
+
 
 }

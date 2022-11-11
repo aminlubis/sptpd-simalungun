@@ -5,7 +5,7 @@ class Register_model extends CI_Model {
 
 	var $table = 'wajibpajak';
 	var $column = array('wajibpajak.nama');
-	var $select = 'wajibpajak.*, nama_kecamatan, nama_kelurahan';
+	var $select = 'wajibpajak.*, nama_kecamatan, nama_kelurahan, attc.*';
 
 	var $order = array('wajibpajak.no_urut' => 'DESC');
 
@@ -19,6 +19,7 @@ class Register_model extends CI_Model {
 		$this->db->from($this->table);
 		$this->db->join('kode_kecamatan','kode_kecamatan.kode_kecamatan=wajibpajak.kecamatan','left');
 		$this->db->join('kode_kelurahan','kode_kelurahan.kode_kelurahan=wajibpajak.kelurahan','left');
+		$this->db->join("(SELECT * FROM t_fileattachment WHERE reftable='wajibpajak') as attc","(attc.noktp=wajibpajak.noktp)",'left');
 	}
 
 	private function _get_datatables_query()

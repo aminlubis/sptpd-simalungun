@@ -110,9 +110,9 @@ class References extends MX_Controller {
 
 	public function getVillagesByDistrict($district_id='')
 	{
-        $query = $this->db->where('district_id', $district_id)
-        				  ->order_by('name', 'ASC')
-                          ->get('villages');
+        $query = $this->db->where('kode_kecamatan', $district_id)
+        				  ->order_by('nama_kelurahan', 'ASC')
+                          ->get('kode_kelurahan');
 		
         echo json_encode($query->result());
 	}

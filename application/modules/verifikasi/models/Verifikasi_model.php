@@ -23,15 +23,36 @@ class Verifikasi_model extends CI_Model {
 		$this->db->join('kode_kecamatan','kode_kecamatan.kode_kecamatan=objek_pajak.kecamatan_usaha','left');
 		$this->db->join('kode_kelurahan','kode_kelurahan.kode_kelurahan=objek_pajak.kode_kelurahan','left');
 		$this->db->join('wajibpajak','wajibpajak.npwpd=objek_pajak.npwpd','left');
-		$this->db->where("objek_pajak.npwpd IN (SELECT npwpd FROM wajibpajak WHERE noktp='".$this->session->userdata('user')->noktp."')");
-		
 
+		
+	}
+
+	private function _filter(){
+		if(isset($_GET['status']) AND $_GET['status'] == 1){
+			$this->db->where('objek_pajak.is_verified', 1);
+		}else{
+			$this->db->where('(objek_pajak.is_verified is null OR objek_pajak.is_verified = 0)');
+		}
+
+		if(isset($_GET['jenispajak']) AND $_GET['jenispajak'] != ''){
+			$this->db->where('objek_pajak.kodejenispajak', $_GET['jenispajak']);
+		}
+
+		if(isset($_GET['kecamatan']) AND $_GET['kecamatan'] != ''){
+			$this->db->where('objek_pajak.kecamatan_usaha', $_GET['kecamatan']);
+		}
+
+		if(isset($_GET['kelurahan']) AND $_GET['kelurahan'] != ''){
+			$this->db->where('objek_pajak.kode_kelurahan', $_GET['kelurahan']);
+		}
 	}
 
 	private function _get_datatables_query()
 	{
 		
 		$this->_main_query();
+		$this->_filter();
+		
 
 		$i = 0;
 	
@@ -73,6 +94,7 @@ class Verifikasi_model extends CI_Model {
 	public function count_all()
 	{
 		$this->_main_query();
+		$this->_filter();
 		return $this->db->count_all_results();
 	}
 
@@ -110,20 +132,7 @@ class Verifikasi_model extends CI_Model {
 		return $this->db->update($this->table, array('is_deleted' => 'Y', 'is_active' => 'N'));
 	}
 
-	public function getNopd(){
-		// max num
-		$max_num = $this->db->get_where('objek_pajak', array('npwpd' => $_POST['npwpd']))->num_rows();
-		$strlen = strlen($max_num);
-
-		$setnul = '';
-		for ($i=0; $i < (4-$strlen); $i++) { 
-			$setnul .= '0';
-		}
-
-		$nopd = $_POST['npwpd'].'-0'.$_POST['kodejenispajak'].'-'.$_POST['kode_kelurahan'].'-'.$setnul.$max_num;
-
-		return $nopd;
-	}
+	
 
 
 }
