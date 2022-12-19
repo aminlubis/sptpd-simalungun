@@ -8,7 +8,7 @@
           <div class="position-relative">
               <div id="login-box" class="login-box visible widget-box no-border">
                   <center>
-                    <img src="<?php echo base_url()?>assets/images/logo.png" width="150px"><br>
+                    <img src="<?php echo base_url()?>assets/images/logo.png" width="100px"><br>
                     <br>
                     <div class="social-or-login center">
                       <span class="bigger-110" ><i>Aplikasi e-SPTPD</i></span><br>
@@ -33,6 +33,7 @@
                               <option value="">-Login Sebagai-</option>
                               <option value="2">Wajib Pajak</option>
                               <option value="1">Petugas Pajak</option>
+                              <option value="3">OPD</option>
                             </select>
                             <i class="ace-icon fa fa-user"></i>
                           </span>

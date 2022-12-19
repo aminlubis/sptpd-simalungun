@@ -60,9 +60,9 @@
         border: 1px solid #80808052 !important;
     }
 
-    .ace-nav > li > a {
+    /* .ace-nav > li > a {
       background-color: #383432 !important;
-    }
+    } */
     .page-header h1{
       font-size: 12px !important;
     }
@@ -70,8 +70,9 @@
 
   </style>
   <body class="no-skin">
+
     <!-- #section:basics/navbar.layout -->
-    <div id="navbar" class="navbar navbar-default    navbar-collapse       h-navbar ace-save-state" style="background: linear-gradient(150deg, #fa1414, #f6eb34c7)">
+    <div id="navbar" class="navbar navbar-default    navbar-collapse       h-navbar ace-save-state" style="background: #0a6960">
     <!-- background: linear-gradient(150deg, #fa1414, #f6eb34c7); -->
 			<div class="navbar-container ace-save-state" id="navbar-container">
 				<div class="navbar-header pull-left">
@@ -85,6 +86,16 @@
 					<button class="pull-right navbar-toggle navbar-toggle-img collapsed" type="button" data-toggle="collapse" data-target=".navbar-buttons,.navbar-menu">
 						<span class="sr-only">Toggle user menu</span>
 						<img src="<?php echo base_url()?>assets/images/logo.png" alt="Jason's Photo">
+					</button>
+
+          <button class="pull-right navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#sidebar" aria-expanded="false">
+						<span class="sr-only">Toggle sidebar</span>
+
+						<span class="icon-bar"></span>
+
+						<span class="icon-bar"></span>
+
+						<span class="icon-bar"></span>
 					</button>
 
 				</div>
@@ -103,7 +114,7 @@
 
 				<nav role="navigation" class="navbar-menu pull-left navbar-collapse collapse" aria-expanded="false" style="height: 1px;">
 					
-					<form class="navbar-form navbar-right form-search" role="search">
+					<!-- <form class="navbar-form navbar-right form-search" role="search">
 						<div class="form-group" style="padding-top: 2px">
               <label class="white" style="font-size: 14px"><i class="fa fa-search"></i> Cek NPWP</label>
 							<input type="text" placeholder="Masukan No Wajib Pajak" style="width: 200px !important">
@@ -112,7 +123,7 @@
 						<button type="button" class="btn btn-mini btn-info2">
 							<i class="ace-icon fa fa-search icon-only bigger-110"></i>
 						</button>
-					</form>
+					</form> -->
 				</nav>
 			</div><!-- /.navbar-container -->
 		</div>
@@ -221,6 +232,51 @@
 
             <?php endif; ?>
 
+            <?php if(in_array($this->session->userdata('user')->user_level, array(3))) :?>
+            
+              <li class="hover">
+                <a href="#" onclick="getMenu('objek_pajak/Objek_pajak_opd')" class="dropdown-toggle">
+                  <i class="menu-icon fa fa-globe"></i>
+                  <span class="menu-text">
+                    Objek Pajak
+                  </span>
+                  <b class="arrow fa fa-angle-down"></b>
+                </a>
+              </li>
+              
+            <li class="hover">
+              <a href="#" class="dropdown-toggle">
+                <i class="menu-icon fa fa-list"></i>
+                <span class="menu-text"> S P T P D </span>
+
+                <b class="arrow fa fa-angle-down"></b>
+              </a>
+
+              <b class="arrow"></b>
+
+              <ul class="submenu can-scroll ace-scroll scroll-disabled" style="">
+                <li class="hover">
+                  <a href="#" onclick="getMenu('sptpd/Sptpd_opd/form')">
+                    <i class="menu-icon fa fa-caret-right"></i>
+                    Entri e-SPTPD
+                  </a>
+
+                  <b class="arrow"></b>
+                </li>
+
+                <li class="hover">
+                  <a href="#" onclick="getMenu('sptpd/Sptpd_opd')">
+                    <i class="menu-icon fa fa-caret-right"></i>
+                    Riwayat Entri SPTPD
+                  </a>
+
+                  <b class="arrow"></b>
+                </li>
+              </ul><div class="scroll-track scroll-detached no-track scroll-thin scroll-margin scroll-visible" style="display: none; top: 69px; left: 183px;"><div class="scroll-bar" style="top: 0px;"></div></div>
+            </li>
+
+            <?php endif; ?>
+
             <?php if(in_array($this->session->userdata('user')->user_level, array(1))) :?>
             <li class="hover">
               <a href="#" onclick="getMenu('Verifikasi')" class="dropdown-toggle">
@@ -244,7 +300,7 @@
 
             <?php endif; ?>
 
-            <?php if(in_array($this->session->userdata('user')->user_level, array(1,2))) :?>
+            <?php if(in_array($this->session->userdata('user')->user_level, array(1,2,3))) :?>
             <li class="hover">
               <a href="#" onclick="getMenu('change-password')" class="dropdown-toggle">
                 <i class="menu-icon fa fa-lock"></i>
@@ -292,8 +348,10 @@
               <span style="font-weight: bold; font-size: 16px"><?php echo $profil_wp->nama?> [ <?php echo $profil_wp->noktp?> ]</span>
               <!-- hidden -->
               <input type="hidden" name="namawajibpajak" value="<?php echo $profil_wp->nama?>">
-              <?php else :?>
-                <span style="font-size: 16px; font-weight: bold"><?php echo $this->session->userdata('user')->fullname?></span> <br>[Petugas Pajak]
+              <?php else :
+                $level_name = ($this->session->userdata('user')->user_level == 1)?'Petugas Pajak':'OPD';
+              ?>
+                <span style="font-size: 16px; font-weight: bold"><?php echo $this->session->userdata('user')->fullname?></span> <br>[<?php echo $level_name?>]
                 
               <?php endif; ?>
             </div>

@@ -127,7 +127,7 @@ class Tmp_user extends MX_Controller {
             $row[] = '<div class="center">'.$is_deleted.'</div>';
             $row[] = $row_list->tgl_daftar;
             $row[] = '<div class="center">'.$row_list->level.'</div>';
-            if($row_list->user_level == 1){
+            if(in_array($row_list->user_level, array(1,3))){
                 $row[] = '<div class="center"><a href="#" class="btn btn-xs btn-success" onclick="getMenu('."'setting/Tmp_user/form/".$row_list->id."')".'"><i class="fa fa-pencil"></i> Ubah</a><a href="#" class="btn btn-xs btn-danger" onclick="delete_data(' . "'" . $row_list->id . "'" . ')"><i class="fa fa-trash"></i> Hapus</a></div>';
             }else{
                 $row[] = '<div class="center"><a href="#" class="btn btn-xs btn-inverse" onclick="getMenu('."'setting/Tmp_user/form_reset/".$row_list->id."')".'"><i class="fa fa-refresh"></i> Resep Password</a></div>';
@@ -154,6 +154,7 @@ class Tmp_user extends MX_Controller {
         $val = $this->form_validation;
         $val->set_rules('fullname', 'Password', 'trim|required');
         $val->set_rules('password', 'Password', 'trim|required|min_length[6]');
+        $val->set_rules('user_level', 'Level', 'trim|required');
         $val->set_rules('confirm', 'Password Confirmation', 'trim|required|matches[password]');
         if($_POST['id'] == 0){
             $val->set_rules('username', 'Email', 'trim|required|valid_email|is_unique[qrcode_user.username]', array('is_unique' => 'Email sudah pernah terdaftar'));
@@ -181,7 +182,7 @@ class Tmp_user extends MX_Controller {
                 'username' => $this->regex->_genRegex($val->set_value('username'),'RGXQSL'),
                 'password' => $this->bcrypt->hash_password($val->set_value('password')),
                 'status' => 'aktif',
-                'user_level' => 1,
+                'user_level' => $this->regex->_genRegex($val->set_value('user_level'),'RGXQSL'),
                 'is_deleted' => 'N',
             );
             

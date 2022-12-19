@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta charset="utf-8" />
-    <title><?php echo APP_TITLE; ?></title>
+    <title id="head_title"><?php echo APP_TITLE; ?></title>
 
     <meta name="description" content="<?php echo APP_TITLE; ?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
@@ -60,9 +60,9 @@
         border: 1px solid #80808052 !important;
     }
 
-    .ace-nav > li > a {
+    /* .ace-nav > li > a {
       background-color: #383432 !important;
-    }
+    } */
 
     .page-header h1{
       font-family: cursive;
@@ -71,13 +71,13 @@
   </style>
   <body class="no-skin">
     <!-- #section:basics/navbar.layout -->
-    <div id="navbar" class="navbar navbar-default    navbar-collapse       h-navbar ace-save-state" style="background: linear-gradient(150deg, #fa1414, #f6eb34c7)">
+    <div id="navbar" class="navbar navbar-default    navbar-collapse       h-navbar ace-save-state" style="background: #0a6960">
     <!-- background: linear-gradient(150deg, #fa1414, #f6eb34c7); -->
 			<div class="navbar-container ace-save-state" id="navbar-container">
 				<div class="navbar-header pull-left">
           <a href="<?php echo base_url()?>" class="navbar-brand" style="padding-top: 13px !important">
             <small>
-              <img src="<?php echo base_url().'assets/images/logo.png'?>" style="width: 34px; margin: -9px 0px -7px;">
+              <!-- <img src="<?php echo base_url().'assets/images/logo.png'?>" style="width: 34px; margin: -9px 0px -7px;"> -->
               <?php echo APP_TITLE; ?>
             </small>
           </a>
@@ -129,7 +129,7 @@
 
 					</ul>
 
-					<form class="navbar-form navbar-right form-search" role="search">
+					<!-- <form class="navbar-form navbar-right form-search" role="search">
 						<div class="form-group" style="padding-top: 2px">
               <label class="white" style="font-size: 14px"><i class="fa fa-search"></i> Cek NPWP</label>
 							<input type="text" placeholder="Masukan No Wajib Pajak" style="width: 200px !important">
@@ -138,7 +138,7 @@
 						<button type="button" class="btn btn-mini btn-info2">
 							<i class="ace-icon fa fa-search icon-only bigger-110"></i>
 						</button>
-					</form>
+					</form> -->
 				</nav>
 			</div><!-- /.navbar-container -->
 		</div>
@@ -165,7 +165,7 @@
                         </h1>
                       </div>
           
-                    <div id="content_graph"></div>
+                    <!-- <div id="content_graph"></div> -->
                     
                   <!-- end content here -->
                 </div>
@@ -202,77 +202,6 @@
         </div>
     </div>
 
-    <!-- GLOBAL MODAL -->
-
-    <div id="globalModalView" class="modal fade" tabindex="-1">
-
-      <div class="modal-dialog" style="overflow-y: scroll; max-height:90%;  margin-top: 50px; margin-bottom:50px;width:90%">
-
-        <div class="modal-content">
-
-          <div class="modal-header">
-
-            <div class="table-header">
-
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-
-                <span class="white">&times;</span>
-
-              </button>
-
-              <span id="text_title">TITLE</span>
-
-            </div>
-
-          </div>
-
-          <div class="modal-body">
-
-            <div id="global_modal_content_detail"></div>
-
-          </div>
-
-        </div><!-- /.modal-content -->
-
-      </div><!-- /.modal-dialog -->
-
-    </div>
-
-    <div id="globalModalViewMedium" class="modal fade" tabindex="-1">
-
-      <div class="modal-dialog" style="overflow-y: scroll; max-height:70%;  margin-top: 50px; margin-bottom:50px;width:50%">
-
-        <div class="modal-content">
-
-          <div class="modal-header">
-
-            <div class="table-header">
-
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-
-                <span class="white">&times;</span>
-
-              </button>
-
-              <span id="text_title_medium">TITLE</span>
-
-            </div>
-
-          </div>
-
-          <div class="modal-body">
-
-            <div id="global_modal_content_detail_medium"></div>
-
-          </div>
-
-        </div><!-- /.modal-content -->
-
-      </div><!-- /.modal-dialog -->
-
-    </div>
-    <!-- maps -->
-    <!--[if !IE]> -->
     
     <script type="text/javascript">
       window.jQuery || document.write("<script src='<?php echo base_url()?>/assets/js/jquery.js'>"+"<"+"/script>");
@@ -347,7 +276,9 @@
     <script src="<?php echo base_url()?>assets/js/custom/menu_load_page.js"></script>
 
     <script type="text/javascript">
-      
+      $(document).ready(function(){
+        $('#page-area-content').load('login/Login');
+      })
       
       function show_modal(url, title){
 
@@ -436,18 +367,18 @@
     <script> 
       document.addEventListener('contextmenu', event=> event.preventDefault()); 
       document.onkeydown = function(e) { 
-      if(event.keyCode == 123) { 
-      return false; 
-      } 
-      if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)){ 
-      return false; 
-      } 
-      if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)){ 
-      return false; 
-      } 
-      if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)){ 
-      return false; 
-      } 
+        if(event.keyCode == 123) { 
+        return false; 
+        } 
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)){ 
+        return false; 
+        } 
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)){ 
+        return false; 
+        } 
+        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)){ 
+        return false; 
+        } 
       } 
     </script> 
     <?php endif; ?>

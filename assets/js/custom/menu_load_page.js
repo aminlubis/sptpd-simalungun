@@ -20,22 +20,7 @@ function getMenu(link)
     preventDefault();
     $('#page-area-content').html(loading);
     $('#page-area-content').load(link);
-    // $.ajax({
-    //     url : link,
-    //     type: "POST",
-    //     beforeSend: function() {
-    //         //achtungShowLoader();
-    //       },
-    //     error: function(xhr)
-    //     { 
-    //        $('#page-area-content').html(xhr.responseText);
-    //     },
-    //     complete: function(xhr) {     
-    //         $('#page-area-content').load(link);
-    //         //achtungHideLoader();
-    //     }
-    // });
-
+    
 }
 
 function getMenuTabs(link, tabs_id)
@@ -46,16 +31,16 @@ function getMenuTabs(link, tabs_id)
         url : link,
         type: "POST",
         beforeSend: function() {
-            // achtungShowLoader();
-          },
+          // achtungShowLoader();
+        },
         error: function(xhr)
         { 
            $('#'+tabs_id).html(xhr.responseText);
         },
         complete: function(xhr) {    
-            $('#'+tabs_id).load(link);
-            // achtungHideLoader();
-            //$("html, body").animate({ scrollTop: "300px" });
+          $('#'+tabs_id).load(link);
+          // achtungHideLoader();
+          //$("html, body").animate({ scrollTop: "300px" });
         }
     });
 

@@ -1190,7 +1190,7 @@ pre.prettyprint {
   border-left-width: 0;
 }
 .ace-nav > li > a {
-  background-color: #050505;
+  /* background-color: #050505; */
   color: #FFF;
   display: block;
   line-height: inherit;

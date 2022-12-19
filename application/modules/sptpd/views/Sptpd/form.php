@@ -32,7 +32,7 @@
                     </label>
 
                     <div class="input-group col-md-12">
-                        <?php echo $this->master->custom_selection_with_info(array('table'=>'view_objek_pajak', 'where'=>array('npwpd' => $profil_wp->npwpd), 'id'=>'id_izin_usaha', 'name' => 'nama_usaha', 'addinfo' => 'jenispajak'),'','jenisusaha','jenisusaha','form-control','','');?>
+                        <?php echo $this->master->custom_selection_with_info(array('table'=>'view_objek_pajak', 'where'=>array('npwpd' => $profil_wp->npwpd, 'user_opd_id' => NULL), 'id'=>'id_izin_usaha', 'name' => 'nama_usaha', 'addinfo' => 'jenispajak'),'','jenisusaha','jenisusaha','form-control','','');?>
                     </div>
                 </div>
 

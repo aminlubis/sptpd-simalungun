@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Objek_pajak_model extends CI_Model {
+class Objek_pajak_opd_model extends CI_Model {
 
 	var $table = 'objek_pajak';
 	var $column = array('objek_pajak.nama_usaha');
@@ -22,8 +22,7 @@ class Objek_pajak_model extends CI_Model {
 		$this->db->join('kode_kecamatan','kode_kecamatan.kode_kecamatan=objek_pajak.kecamatan_usaha','left');
 		$this->db->join('kode_kelurahan','kode_kelurahan.kode_kelurahan=objek_pajak.kode_kelurahan','left');
 		$this->db->join("(SELECT * FROM t_fileattachment WHERE reftable='objek_pajak') as attc","(attc.refid=objek_pajak.nopd)",'left');
-		$this->db->where("objek_pajak.npwpd IN (SELECT npwpd FROM wajibpajak WHERE noktp='".$this->session->userdata('user')->noktp."')");
-		$this->db->where("user_opd_id IS NULL");
+		$this->db->where("user_opd_id", $this->session->userdata('user')->id);
 
 	}
 

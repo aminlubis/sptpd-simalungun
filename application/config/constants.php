@@ -12,7 +12,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 /*custom constant*/
-define('APP_TITLE', 'e-SPTPD SIMALUNGUN');
+define('APP_TITLE', 'e-SPTPD Kab. Simalungun');
 define('COMPANY', 'e-SPTPD SIMALUNGUN');
 define('TEMPLATE', 'Ace Admin Full Custom');
 define('PATH_IMG_CONTENT', 'uploaded/images/content/');

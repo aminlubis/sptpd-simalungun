@@ -2,6 +2,9 @@
 <script>
     $('.format_number').number( true, 0, '.' );
 
+    $(document).ready(function(){
+        sumOmset();
+    })
     function sumOmset(){
         // Omset
         var a = $('#bayarmakanan').val();
@@ -30,49 +33,49 @@
 <div class="form-group">
     <label class="control-label col-md-2">Makanan</label>
     <div class="col-md-1">
-        <input name="bayarmakanan" id="bayarmakanan" value="" onchange="sumOmset()" class="form-control format_number" type="text">
+        <input name="bayarmakanan" id="bayarmakanan" value="<?php echo isset($value->bayarmakanan)?$value->bayarmakanan:0?>" onchange="sumOmset()" class="form-control format_number" type="text">
     </div>
 </div>
 
 <div class="form-group">
     <label class="control-label col-md-2">Minuman</label>
     <div class="col-md-1">
-        <input name="bayarminum" id="bayarminum" value="" onchange="sumOmset()" class="form-control format_number" type="text">
+        <input name="bayarminum" id="bayarminum" value="<?php echo isset($value->bayarminum)?$value->bayarminum:0?>" onchange="sumOmset()" class="form-control format_number" type="text">
     </div>
 </div>
 
 <div class="form-group">
     <label class="control-label col-md-2">Makanan & Minuman</label>
     <div class="col-md-1">
-        <input name="bayarmakanminum" id="bayarmakanminum" value="" onchange="sumOmset()" class="form-control format_number" type="text">
+        <input name="bayarmakanminum" id="bayarmakanminum" value="<?php echo isset($value->bayarmakanminum)?$value->bayarmakanminum:0?>" onchange="sumOmset()" class="form-control format_number" type="text">
     </div>
 </div>
 
 <div class="form-group">
     <label class="control-label col-md-2">Nasi Kotak/Nasi Bungkus</label>
     <div class="col-md-1">
-        <input name="byrnasikotak" id="byrnasikotak" value="" onchange="sumOmset()" class="form-control format_number" type="text">
+        <input name="byrnasikotak" id="byrnasikotak" value="<?php echo isset($value->byrnasikotak)?$value->byrnasikotak:0?>" onchange="sumOmset()" class="form-control format_number" type="text">
     </div>
 </div>
 
 <div class="form-group">
     <label class="control-label col-md-2">Pelayanan Prasmanan</label>
     <div class="col-md-1">
-        <input name="byrpelayanan" id="byrpelayanan" value="" onchange="sumOmset()" class="form-control format_number" type="text">
+        <input name="byrpelayanan" id="byrpelayanan" value="<?php echo isset($value->byrpelayanan)?$value->byrpelayanan:0?>" onchange="sumOmset()" class="form-control format_number" type="text">
     </div>
 </div>
 
 <div class="form-group">
     <label class="control-label col-md-2">Pembayarann Lainnya</label>
     <div class="col-md-1">
-        <input name="byrlainnya" id="byrlainnya" value="" onchange="sumOmset()" class="form-control format_number" type="text">
+        <input name="byrlainnya" id="byrlainnya" value="<?php echo isset($value->byrlainnya)?$value->byrlainnya:0?>" onchange="sumOmset()" class="form-control format_number" type="text">
     </div>
 </div>
 
 <div class="form-group">
     <label class="control-label col-md-2">Total Omset</label>
     <div class="col-md-1">
-        <input name="ttlomset" id="ttlomset" value=""  class="form-control format_number" type="text" readonly>
+        <input name="ttlomset" id="ttlomset" value="<?php echo isset($value->ttlomset)?$value->ttlomset:0?>"  class="form-control format_number" type="text" readonly>
     </div>
 </div>
 

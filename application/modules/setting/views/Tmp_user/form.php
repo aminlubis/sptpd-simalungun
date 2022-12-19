@@ -53,7 +53,7 @@ $(document).ready(function(){
     <!-- PAGE CONTENT BEGINS -->
           <div class="widget-body">
             <div class="widget-main no-padding">
-              <form class="form-horizontal" method="post" id="form_Tmp_user" action="<?php echo site_url('setting/Tmp_user/process')?>" enctype="multipart/form-data">
+              <form class="form-horizontal" method="post" id="form_Tmp_user" action="<?php echo site_url('setting/Tmp_user/process')?>" enctype="multipart/form-data" autocomplete="off">
                 <br>
 
                 <div class="form-group">
@@ -86,6 +86,16 @@ $(document).ready(function(){
                   <label class="control-label col-md-2">Password Confirmation</label>
                   <div class="col-md-2">
                     <input name="confirm" id="confirm" value="" placeholder="" class="form-control" type="password" <?php echo ($flag=='read')?'readonly':''?> >
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-md-2">Level</label>
+                  <div class="col-md-2">
+                    <select class="form-control" name="user_level">
+                      <option value="">-Pilih Level-</option>
+                      <option value="1" <?php echo isset($value->user_level)?($value->user_level == 1)?'selected':'':''?>>Petugas Pajak</option>
+                      <option value="3" <?php echo isset($value->user_level)?($value->user_level == 3)?'selected':'':''?>>OPD</option>
+                    </select>
                   </div>
                 </div>
                 <div class="form-group">

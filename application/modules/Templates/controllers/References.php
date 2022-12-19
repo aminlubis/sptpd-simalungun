@@ -162,7 +162,7 @@ class References extends MX_Controller {
 	{
         $query = $this->db->where('id_izin_usaha', $id)
         				  ->order_by('nama_usaha', 'ASC')
-                          ->get('objek_pajak')->row();
+                          ->get('view_objek_pajak')->row();
 		echo json_encode($query);
 	}
 
@@ -174,5 +174,37 @@ class References extends MX_Controller {
 
         echo json_encode( array('html' => $html) );
     }
+
+	public function getJenisUsaha()
+	{
+        $result = $this->db->where("nama_usaha LIKE '%".$_POST['keyword']."%' ")->get('view_objek_pajak')->result();
+		
+		$arrResult = [];
+		foreach ($result as $key => $value) {
+			$arrResult[] = $value->id_izin_usaha.' : '.$value->nama_usaha.' ['.$value->jenispajak.'] ';
+		}
+		echo json_encode($arrResult);
+		
+	}
+
+	public function getWajibPajak()
+	{
+        $result = $this->db->where("nama LIKE '%".$_POST['keyword']."%' ")->get('wajibpajak')->result();
+		
+		$arrResult = [];
+		foreach ($result as $key => $value) {
+			$arrResult[] = $value->npwpd.' : '.$value->nama.' ['.$value->alamat.'] ';
+		}
+
+		echo json_encode($arrResult);
+		
+	}
+
+	public function getDetailWp($npwpd)
+	{
+        $query = $this->db->where('npwpd', $npwpd)
+                          ->get('wajibpajak')->row();
+		echo json_encode($query);
+	}
 
 }

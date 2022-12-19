@@ -46,7 +46,9 @@ class Sptpd extends MX_Controller {
     public function changeForm($kodejenispajak) {
 
         $data = [];
+        $id_hop = isset($_GET['id_hop'])?$_GET['id_hop']:[];
         $data['pajak'] = $this->db->get_where('jenispajak', array('kodejenispajak' => $kodejenispajak))->row();
+        $data['value'] = $this->Sptpd->get_data_by_jenis_pajak($id_hop, $kodejenispajak);
         $html = $this->load->view('sptpd/Sptpd/form_'.$kodejenispajak.'', $data, true);
         echo json_encode(array('html' => $html));
         
@@ -117,12 +119,12 @@ class Sptpd extends MX_Controller {
             $hop = array(
                 'noobjekpajak' => $this->regex->_genRegex( $_POST['nopd'] , 'RGXQSL'),
                 'nama_wajibpajak' => $this->regex->_genRegex( $_POST['namawajibpajak'] , 'RGXQSL'),
+                'kodejenispajak' => $this->regex->_genRegex( 1 , 'RGXINT'),
                 'nama_usahaop' => $this->regex->_genRegex( $_POST['nama_usaha_op'] , 'RGXQSL'),
                 'periode_awal' => $this->regex->_genRegex( $_POST['periodeawal'] , 'RGXQSL'),
                 'periode_akhir' => $this->regex->_genRegex( $_POST['periodeakhir'] , 'RGXQSL'),
                 'pajakterutang' => $this->regex->_genRegex( $val->set_value('pajakterutang') , 'RGXINT'),
                 'waktu_sptpd' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
-                'penetapan_pajak_official' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
                 'omset' => $this->regex->_genRegex( $val->set_value('ttlomset') , 'RGXINT'),
             );
             $this->db->insert('history_objek_pajak', $hop);
@@ -206,13 +208,13 @@ class Sptpd extends MX_Controller {
             // history objek pajak
             $hop = array(
                 'noobjekpajak' => $this->regex->_genRegex( $_POST['nopd'] , 'RGXQSL'),
+                'kodejenispajak' => $this->regex->_genRegex( 2 , 'RGXINT'),
                 'nama_wajibpajak' => $this->regex->_genRegex( $_POST['namawajibpajak'] , 'RGXQSL'),
                 'nama_usahaop' => $this->regex->_genRegex( $_POST['nama_usaha_op'] , 'RGXQSL'),
                 'periode_awal' => $this->regex->_genRegex( $_POST['periodeawal'] , 'RGXQSL'),
                 'periode_akhir' => $this->regex->_genRegex( $_POST['periodeakhir'] , 'RGXQSL'),
                 'pajakterutang' => $this->regex->_genRegex( $val->set_value('pajakterutang') , 'RGXINT'),
                 'waktu_sptpd' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
-                'penetapan_pajak_official' => $this->regex->_genRegex( date('Y-m-d') , 'RGXQSL'),
                 'omset' => $this->regex->_genRegex( $val->set_value('ttlomset') , 'RGXINT'),
             );
             $this->db->insert('history_objek_pajak', $hop);

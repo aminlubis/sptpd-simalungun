@@ -2,6 +2,10 @@
 <script>
     $('.format_number').number( true, 0, '.' );
 
+    $(document).ready(function(){
+        sumOmset();
+    })
+    
     function sumOmset(){
         // Omset
         var a = $('#totalpembayarankamar').val();
@@ -26,14 +30,14 @@
 <div class="form-group">
     <label class="control-label col-md-2">Omset Pembayaran Kamar</label>
     <div class="col-md-1">
-        <input name="totalpembayarankamar" id="totalpembayarankamar" value="" onchange="sumOmset()" class="form-control format_number" type="text">
+        <input name="totalpembayarankamar" id="totalpembayarankamar" value="<?php echo isset($value->totalpembayarankamar)?$value->totalpembayarankamar:0?>" onchange="sumOmset()" class="form-control format_number" type="text">
     </div>
 </div>
 
 <div class="form-group">
     <label class="control-label col-md-2">Omset Pembayaran Fasilitas</label>
     <div class="col-md-1">
-        <input name="totalbayarfasilitas" id="totalbayarfasilitas" value="" onchange="sumOmset()" class="form-control format_number" type="text">
+        <input name="totalbayarfasilitas" id="totalbayarfasilitas" value="<?php echo isset($value->totalbayarfasilitas)?$value->totalbayarfasilitas:0?>" onchange="sumOmset()" class="form-control format_number" type="text">
     </div>
 </div>
 

@@ -1,11 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Sptpd_model extends CI_Model {
+class Sptpd_opd_model extends CI_Model {
 
 	var $table = 'history_objek_pajak';
 	var $column = array('b.nama_usaha');
-	var $select = 'b.npwpd, history_objek_pajak.*, b.nama_usaha';
+	var $select = 'b.npwpd, history_objek_pajak.*, b.nama_usaha, b.id_izin_usaha, b.kodejenispajak as kdjnspjk';
 
 	var $order = array('history_objek_pajak.id_hop' => 'DESC');
 
@@ -19,8 +19,7 @@ class Sptpd_model extends CI_Model {
 		$this->db->from($this->table);
 		$this->db->join('objek_pajak b','b.nopd=history_objek_pajak.noobjekpajak', 'LEFT');
 		$this->db->join('wajibpajak c','c.npwpd=b.npwpd', 'LEFT');
-		$this->db->where('c.noktp', $this->session->userdata('user')->noktp);
-		$this->db->where("b.user_opd_id IS NULL");
+		$this->db->where("b.user_opd_id", $this->session->userdata('user')->id);
 
 	}
 
@@ -78,11 +77,11 @@ class Sptpd_model extends CI_Model {
 	{
 		$this->_main_query();
 		if(is_array($id)){
-			$this->db->where_in(''.$this->table.'.id_izin_usaha',$id);
+			$this->db->where_in(''.$this->table.'.id_hop',$id);
 			$query = $this->db->get();
 			return $query->result();
 		}else{
-			$this->db->where(''.$this->table.'.id_izin_usaha',$id);
+			$this->db->where(''.$this->table.'.id_hop',$id);
 			$query = $this->db->get();
 			return $query->row();
 		}
@@ -144,21 +143,12 @@ class Sptpd_model extends CI_Model {
 		return $objek_pajak;
 	}
 
-	public function get_data_by_jenis_pajak($id_hop, $kodejenispajak){
-		switch ($kodejenispajak) {
-			case '1':
-				# code...
-				$table = 'sptpdhotel';
-				break;
-			case '2':
-				# code...
-				$table = 'sptpdrestoran';
-				break;
-		}
-
-		$query = $this->db->get_where($table, array('id_hop' => $id_hop))->row();
-		return $query;
+	public function get_objek_pajak_by_id($id_izin_usaha){
+		$objek_pajak = $this->db->get_where('view_objek_pajak', array('id_izin_usaha' => $id_izin_usaha));
+		return $objek_pajak->row();
 	}
+
+	
 
 
 }
