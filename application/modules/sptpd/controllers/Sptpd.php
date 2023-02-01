@@ -48,7 +48,7 @@ class Sptpd extends MX_Controller {
         $data = [];
         $id_hop = isset($_GET['id_hop'])?$_GET['id_hop']:0;
         $data['pajak'] = $this->db->get_where('jenispajak', array('kodejenispajak' => $kodejenispajak))->row();
-        $data['value'] = $this->Sptpd->get_data_by_jenis_pajak($id_hop, $kodejenispajak);
+        $data['value'] = $this->Sptpd->get_data_by_jenis_pajak((int)$id_hop, $kodejenispajak);
         $html = $this->load->view('sptpd/Sptpd/form_'.$kodejenispajak.'', $data, true);
         echo json_encode(array('html' => $html));
         
