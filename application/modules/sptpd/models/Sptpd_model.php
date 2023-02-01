@@ -145,19 +145,30 @@ class Sptpd_model extends CI_Model {
 	}
 
 	public function get_data_by_jenis_pajak($id_hop, $kodejenispajak){
+		
 		switch ($kodejenispajak) {
-			case '1':
+			case 1:
 				# code...
 				$table = 'sptpdhotel';
 				break;
-			case '2':
+			case 2:
 				# code...
 				$table = 'sptpdrestoran';
 				break;
+			
+				default:
+				$table = '';
+				break;
 		}
 
-		$query = $this->db->get_where($table, array('id_hop' => $id_hop))->row();
-		return $query;
+		if($table != ''){
+			$query = $this->db->get_where($table, array('id_hop' => $id_hop))->row();
+			return $query;
+		}else{
+			return false;
+		}
+
+		
 	}
 
 

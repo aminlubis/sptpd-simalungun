@@ -41,7 +41,7 @@ class Templates extends MX_Controller {
 		if ( ! array_key_exists('body', $data) )
 		{		
       // We get the name of the class that called this method so we
-      // can get its view file.
+      // can get its view file.~
 		$caller = debug_backtrace();
 		$caller_module = $caller[1]['class'];
 		
