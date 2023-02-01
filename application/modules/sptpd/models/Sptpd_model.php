@@ -162,7 +162,7 @@ class Sptpd_model extends CI_Model {
 		}
 
 		if($table != ''){
-			$query = $this->db->get_where($table, array('id_hop' => $id_hop))->row();
+			$query = $this->db->where('id_hop', $id_hop)->get($table)->row();
 			return $query;
 		}else{
 			return false;
