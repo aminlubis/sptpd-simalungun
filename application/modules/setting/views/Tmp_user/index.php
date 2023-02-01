@@ -47,4 +47,36 @@
 
 
 <script src="<?php echo base_url().'assets/js/custom/als_datatable_with_detail_custom_url.js'?>"></script>
+<script>
+  function aktivasi_akun(myid){
+  if(confirm('Are you sure?')){
+    $.ajax({
+        url: 'setting/Tmp_user/aktivasi',
+        type: "post",
+        data: {ID:myid},
+        dataType: "json",
+        beforeSend: function() {
+          achtungShowLoader();  
+        },
+        uploadProgress: function(event, position, total, percentComplete) {
+        },
+        complete: function(xhr) {     
+          var data=xhr.responseText;
+          var jsonResponse = JSON.parse(data);
+          if(jsonResponse.status === 200){
+            $.achtung({message: jsonResponse.message, timeout:5});
+            reload_table();
+          }else{
+            $.achtung({message: jsonResponse.message, timeout:5, className: 'achtungFail'});
+          }
+          achtungHideLoader();
+        }
 
+      });
+
+  }else{
+    return false;
+  }
+  
+}
+</script>

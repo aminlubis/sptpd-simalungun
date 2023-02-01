@@ -130,8 +130,11 @@ class Tmp_user extends MX_Controller {
             if(in_array($row_list->user_level, array(1,3))){
                 $row[] = '<div class="center"><a href="#" class="btn btn-xs btn-success" onclick="getMenu('."'setting/Tmp_user/form/".$row_list->id."')".'"><i class="fa fa-pencil"></i> Ubah</a><a href="#" class="btn btn-xs btn-danger" onclick="delete_data(' . "'" . $row_list->id . "'" . ')"><i class="fa fa-trash"></i> Hapus</a></div>';
             }else{
-                $row[] = '<div class="center"><a href="#" class="btn btn-xs btn-inverse" onclick="getMenu('."'setting/Tmp_user/form_reset/".$row_list->id."')".'"><i class="fa fa-refresh"></i> Resep Password</a></div>';
-
+                if($row_list->status_user == 'aktif'){
+                    $row[] = '<div class="center"><a href="#" class="btn btn-xs btn-inverse" onclick="getMenu('."'setting/Tmp_user/form_reset/".$row_list->id."')".'"><i class="fa fa-refresh"></i> Reset Password</a></div>';
+                }else{
+                    $row[] = '<div class="center"><a href="#" class="btn btn-xs btn-purple" onclick="aktivasi_akun(' . "'" . $row_list->id . "'" . ')"><i class="fa fa-unlock"></i> Aktivasi Akun</a></div>';
+                }
             }
                    
             $data[] = $row;
@@ -265,6 +268,17 @@ class Tmp_user extends MX_Controller {
         }
         
     }
+
+    public function aktivasi(){
+		$query = $this->db->get_where('qrcode_user', array('id' => $_POST['ID']));
+		if($query->num_rows() > 0){
+			// update user
+			$this->db->where( array('id' => $_POST['ID']) )->update('qrcode_user', array('status' => 'aktif'));
+			echo json_encode(array('status' => 200, 'message' => 'Aktivasi akun Berhasil Dilakukan'));
+		}else{
+			echo json_encode(array('status' => 301, 'message' => 'Aktivasi akun gagal dilakukan!'));
+		}
+	}
 
 }
 

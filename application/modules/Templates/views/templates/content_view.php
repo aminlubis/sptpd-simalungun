@@ -173,7 +173,6 @@
                 <i class="menu-icon fa fa-desktop"></i>
                 <span class="menu-text"> Dashboard </span>
               </a>
-
               <b class="arrow"></b>
             </li>
 
@@ -544,6 +543,12 @@
 
     <script type="text/javascript">
       
+      $(document).ready(function(){
+        
+        <?php if(in_array($this->session->userdata('user')->user_level, [2,3])) :?>
+        getMenu('Sptpd');
+        <?php endif;?>
+      })
       
       function show_modal(url, title){
 
