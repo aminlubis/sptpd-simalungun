@@ -191,7 +191,7 @@
         $('select[name="jenispajak"]').change(function () {
             if ($(this).val()) {
                 $('#form-default').attr('action','sptpd/Sptpd/process_'+$(this).val()+'');
-                $.getJSON("<?php echo site_url('Sptpd/changeForm') ?>/" + $(this).val(), '', function (response) {
+                $.getJSON("<?php echo site_url('sptpd/Sptpd/changeForm') ?>/" + $(this).val(), '', function (response) {
                     $('#form_by_kodejenispajak').html(response.html);
                 });
             } else {

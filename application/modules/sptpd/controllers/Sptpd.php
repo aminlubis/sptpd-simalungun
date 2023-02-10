@@ -32,13 +32,16 @@ class Sptpd extends MX_Controller {
         /*breadcrumb*/
         $this->breadcrumbs->push('Welcome', 'Sptpd/'.strtolower(get_class($this)));
         $profil_wp = $this->Register->get_by_id($this->session->userdata('user')->noktp);
-         $data = array(
+        // echo '<pre>'; print_r($this->db->last_query());
+        // echo '<pre>';print_r($profil_wp);die;
+        $data = array(
             'title' => 'Form SPTPD',
             'subtitle' => COMPANY,
             'profil_wp' => $profil_wp,
             'objek_pajak' => $this->Sptpd->get_objek_pajak($profil_wp->npwpd),
         );
-        // echo '<pre>';print_r($data);die;
+        // echo '<pre>'; print_r($this->session->all_userdata());
+        
         $this->load->view('sptpd/Sptpd/form', $data);
         
     }

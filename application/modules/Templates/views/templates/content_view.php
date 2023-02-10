@@ -210,7 +210,7 @@
 
               <ul class="submenu can-scroll ace-scroll scroll-disabled" style="">
                 <li class="hover">
-                  <a href="#" onclick="getMenu('Sptpd/form')">
+                  <a href="#" onclick="getMenu('sptpd/Sptpd/form')">
                     <i class="menu-icon fa fa-caret-right"></i>
                     Entri e-SPTPD
                   </a>
@@ -219,7 +219,7 @@
                 </li>
 
                 <li class="hover">
-                  <a href="#" onclick="getMenu('Sptpd')">
+                  <a href="#" onclick="getMenu('sptpd/Sptpd')">
                     <i class="menu-icon fa fa-caret-right"></i>
                     Riwayat Entri SPTPD
                   </a>
@@ -278,7 +278,7 @@
 
             <?php if(in_array($this->session->userdata('user')->user_level, array(1))) :?>
             <li class="hover">
-              <a href="#" onclick="getMenu('Verifikasi')" class="dropdown-toggle">
+              <a href="#" onclick="getMenu('verifikasi/Verifikasi')" class="dropdown-toggle">
                 <i class="menu-icon fa fa-search"></i>
                 <span class="menu-text">
                   Verifikasi Data
@@ -546,7 +546,7 @@
       $(document).ready(function(){
         
         <?php if(in_array($this->session->userdata('user')->user_level, [2,3])) :?>
-        getMenu('Sptpd');
+        getMenu('sptpd/Sptpd');
         <?php endif;?>
       })
       

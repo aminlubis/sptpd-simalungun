@@ -112,7 +112,7 @@
 						</li>
             <?php if($this->session->userdata('login') == TRUE):?>
             <li>
-							<a href="#" onclick="getMenu('Sptpd/form')">
+							<a href="#" onclick="getMenu('sptpd/Sptpd/form')">
               <i class="ace-icon fa fa-list bigger-120"></i> 
 								Entri SPTPD
 							</a>

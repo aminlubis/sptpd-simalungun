@@ -5,7 +5,7 @@ class Register_model extends CI_Model {
 
 	var $table = 'wajibpajak';
 	var $column = array('wajibpajak.nama');
-	var $select = 'wajibpajak.*, nama_kecamatan, nama_kelurahan, attc.*';
+	var $select = 'wajibpajak.*, nama_kecamatan, nama_kelurahan, attc.jenis, attc.nama_file, attc.tipe, attc.ukuran, attc.file_attachment, reftable, refid, attc.noktp as attcnoktp, attc.npwpd as attcnpwpd';
 
 	var $order = array('wajibpajak.no_urut' => 'DESC');
 
